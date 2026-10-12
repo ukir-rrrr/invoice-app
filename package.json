@@ -1,7 +1,24 @@
 {
-  "name": "invoice-expo",
+  "name": "invoice-app",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "node scripts/start-web.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "jest",
+    "check:domain": "node scripts/check-domain-imports.mjs",
+    "verify": "npm run typecheck && npm run lint && npm run format:check && npm run check:domain && npm test",
+    "prepare": "husky",
+    "playwright": "playwright test",
+    "regen:migration": "node scripts/regen-migration-registry.mjs"
+  },
   "dependencies": {
     "expo": "~57.0.27",
     "expo-constants": "~57.0.21",
@@ -9,6 +26,7 @@
     "expo-linking": "~57.0.12",
     "expo-router": "~57.0.25",
     "expo-splash-screen": "~57.0.9",
+    "expo-sqlite": "~57.0.4",
     "expo-status-bar": "~57.0.1",
     "expo-symbols": "~57.0.3",
     "expo-web-browser": "~57.0.3",
@@ -22,14 +40,24 @@
     "react-native-worklets": "0.10.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/http-proxy": "^1.17.17",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.2.2",
-    "typescript": "~6.0.3"
+    "better-sqlite3": "^12.4.1",
+    "eslint": "^9.36.0",
+    "eslint-config-expo": "~10.0.0",
+    "http-proxy": "^1.18.1",
+    "husky": "^9.1.7",
+    "jest": "^30.2.0",
+    "lint-staged": "^16.2.0",
+    "prettier": "^3.6.2",
+    "ts-jest": "^29.4.4",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.44.0"
   },
-  "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
-  },
-  "private": true
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,cjs,json,md}": "prettier --write"
+  }
 }
