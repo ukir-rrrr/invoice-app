@@ -525,7 +525,7 @@ v1 のルート上限:
 ```
 app/
   _layout.tsx
-  index.tsx              # 設定済みなら /(tabs)/documents、否则 /setup
+  index.tsx              # 設定済みなら /(tabs)/documents、未設定なら /setup
   setup.tsx
   (tabs)/_layout.tsx
   (tabs)/documents.tsx
