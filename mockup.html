@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>請求・見積アプリ UIモック（例示データ）</title>
+<style>
+  @font-face {
+    font-family: "InvoiceUI";
+    font-style: normal;
+    font-weight: 400;
+    src: local("Noto Sans CJK JP"), local("Noto Sans CJK JP Regular");
+  }
+  @font-face {
+    font-family: "InvoiceUI";
+    font-style: normal;
+    font-weight: 700;
+    src: local("Noto Sans CJK JP"), local("Noto Sans CJK JP Bold");
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: #d4cdc2;
+    color: #1c1915;
+    font-family: "InvoiceUI", "Noto Sans CJK JP", sans-serif;
+    font-weight: 400;
+  }
+  .wrap { padding: 28px 28px 48px; }
+  .intro { max-width: 760px; margin: 0 0 8px; }
+  .intro h1 { font-size: 22px; line-height: 1.4; margin: 0 0 8px; font-weight: 700; }
+  .intro p { margin: 0 0 6px; font-size: 14px; line-height: 1.6; }
+  .gallery { display: flex; flex-wrap: wrap; gap: 28px 22px; align-items: flex-start; }
+  figure { margin: 0; }
+  figcaption { font-size: 13px; font-weight: 700; margin: 0 0 8px; }
+
+  .phone {
+    --paper: #EFEAE2;
+    --sheet: #F7F4EE;
+    --ink: #1C1915;
+    --ink-2: #514C44;
+    --ink-3: #5E584E;
+    --line: #D9D1C3;
+    --fill: #E7E0D4;
+    --accent: #17384A;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #E3EEF3;
+    --moss: #1B5E3B;
+    --moss-soft: #E3F0E7;
+    --ochre: #7A4E0D;
+    --ochre-soft: #F6EDD8;
+    --seal: #8E2F2A;
+    --seal-soft: #F6E4E1;
+    width: 390px;
+    height: 844px;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "InvoiceUI", "Noto Sans CJK JP", sans-serif;
+  }
+  .phone.dark {
+    --paper: #141311;
+    --sheet: #1E1C19;
+    --ink: #F4F0E8;
+    --ink-2: #C9C1B4;
+    --ink-3: #A39B8E;
+    --line: #3C3832;
+    --fill: #2A2722;
+    --accent: #E4D3BC;
+    --accent-ink: #1C1915;
+    --accent-soft: #2A3338;
+    --moss: #8FCBAA;
+    --moss-soft: #1A2E24;
+    --ochre: #E2B86A;
+    --ochre-soft: #2E2618;
+    --seal: #F0B0A8;
+    --seal-soft: #3A2422;
+  }
+  .phone.dark .badge { color: #141311; }
+
+  .status {
+    height: 47px;
+    flex: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 22px 8px 24px;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .sys { display: flex; align-items: center; gap: 6px; }
+  .sys svg { display: block; }
+
+  .scroll { flex: 1 1 auto; min-height: 0; overflow: hidden; padding: 0 20px; }
+  .nav {
+    height: 42px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px 0 12px;
+    gap: 8px;
+  }
+  .back { font-size: 16px; color: var(--accent); font-weight: 700; min-width: 52px; }
+  .nav-title { font-size: 16px; font-weight: 700; }
+  .hind {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    width: 128px;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--ink);
+    opacity: 0.28;
+    transform: translateX(-50%);
+    z-index: 4;
+  }
+
+  .htitle { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  h1 { font-size: 22px; line-height: 28px; margin: 2px 0 0; font-weight: 700; }
+  .screen-name { font-size: 26px; line-height: 32px; margin: 0; font-weight: 700; }
+  .ex { font-size: 12px; color: var(--ink-2); font-weight: 400; flex: none; }
+  .sub { margin: 2px 0 0; font-size: 13px; line-height: 18px; color: var(--ink-2); }
+
+  .bchip {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    text-align: left;
+    background: var(--moss-soft);
+    border-left: 3px solid var(--moss);
+    border-radius: 10px;
+    padding: 10px 10px 10px 12px;
+    color: inherit;
+    font: inherit;
+  }
+  .bchip.bad { background: var(--seal-soft); border-left-color: var(--seal); }
+  .bchip .bt { display: block; font-size: 16px; line-height: 20px; font-weight: 700; }
+  .bchip .bs { display: block; font-size: 13px; line-height: 18px; color: var(--ink-2); margin-top: 1px; }
+  .bchip .chev { margin-left: auto; flex: none; color: var(--ink-2); }
+  .badge {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: grid; place-items: center; flex: none; color: #fff;
+  }
+  .badge.moss { background: var(--moss); }
+  .badge.seal { background: var(--seal); }
+  .badge.ochre { background: var(--ochre); }
+  .badge.sm { width: 22px; height: 22px; }
+  .badge svg { display: block; }
+
+  .actions { display: flex; gap: 8px; margin-top: 14px; }
+  .btn {
+    display: flex; align-items: center; justify-content: center;
+    height: 48px; border-radius: 10px; font-size: 16px; font-weight: 700;
+    font-family: inherit;
+  }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); width: 100%; }
+  .actions .btn.primary { flex: 1; width: auto; }
+  .btn.secondary {
+    background: var(--sheet); color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .btn.side { width: 84px; flex: none; }
+  .btn.block { width: 100%; }
+  .btn.quiet { height: 40px; background: transparent; color: var(--accent); }
+  .btn.seal { height: 44px; background: transparent; color: var(--seal); }
+  .btn.disabled { background: var(--fill); color: var(--ink-3); }
+  .stack { display: flex; flex-direction: column; gap: 8px; }
+  .footer {
+    flex: none;
+    padding: 8px 20px 28px;
+    background: var(--paper);
+  }
+  .footer .btn { width: 100%; flex: none; }
+  .footer.ruled { border-top: 1px solid var(--line); }
+
+  .sec { margin: 12px 0 4px; font-size: 12px; line-height: 16px; font-weight: 700; color: var(--ink-2); }
+  .row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+    min-height: 52px;
+  }
+  .row .main { flex: 1; min-width: 0; }
+  .row .t { font-size: 16px; line-height: 21px; font-weight: 700; }
+  .row .m { font-size: 13px; line-height: 18px; color: var(--ink-2); margin-top: 1px; }
+  .yen { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .between { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+
+  .mark {
+    width: 32px; height: 32px; flex: none;
+    display: grid; place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    background: var(--sheet);
+  }
+  .mark.void { color: var(--seal); border-color: var(--seal); }
+  .voidword { color: var(--seal); font-weight: 700; font-size: 12px; margin-left: 6px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    border: 1px solid var(--line);
+    background: var(--sheet);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 13px;
+    line-height: 18px;
+  }
+  .chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+
+  .tabsel {
+    display: flex;
+    margin: 8px -20px 0;
+    padding: 0 6px;
+    border-bottom: 1px solid var(--line);
+  }
+  .tabsel span {
+    flex: 1;
+    text-align: center;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--ink-2);
+    padding: 8px 0 7px;
+    border-bottom: 2px solid transparent;
+  }
+  .tabsel .on { color: var(--ink); font-weight: 700; border-bottom-color: var(--accent); }
+
+  .tabbar {
+    height: 83px; flex: none;
+    display: flex;
+    padding: 6px 4px 26px;
+    border-top: 1px solid var(--line);
+    background: var(--sheet);
+  }
+  .tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    color: var(--ink-2);
+    font-size: 12px;
+    line-height: 16px;
+    position: relative;
+    padding-top: 4px;
+  }
+  .tab.on { color: var(--accent); font-weight: 700; }
+  .tab.on::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 16px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .tab svg { display: block; }
+
+  .seg {
+    display: flex;
+    background: var(--fill);
+    border-radius: 9px;
+    padding: 2px;
+    height: 32px;
+  }
+  .seg span {
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 12px;
+    border-radius: 7px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .seg .on { background: var(--sheet); color: var(--ink); font-weight: 700; box-shadow: 0 0 0 1px var(--line); }
+
+  .kv { display: flex; align-items: baseline; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--line); }
+  .kv .k { width: 64px; flex: none; font-size: 12px; color: var(--ink-2); }
+  .kv .v { flex: 1; font-size: 16px; line-height: 21px; font-weight: 700; min-width: 0; }
+  .kv .link { flex: none; font-size: 13px; font-weight: 700; color: var(--accent); }
+  .dates { display: flex; gap: 16px; padding: 8px 0 4px; }
+  .dates div { flex: 1; }
+  .k { font-size: 12px; line-height: 16px; color: var(--ink-2); }
+  .vplain { font-size: 16px; line-height: 21px; margin-top: 1px; }
+
+  .line { padding: 4px 0 5px; border-bottom: 1px solid var(--line); }
+  .line .top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .line .name { font-size: 15px; line-height: 20px; font-weight: 700; }
+  .line .bot { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; font-size: 12px; line-height: 16px; color: var(--ink-2); }
+  .tax {
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 0 6px;
+    font-size: 12px;
+    line-height: 18px;
+    background: var(--sheet);
+  }
+  .addline { padding: 6px 0; font-size: 13px; font-weight: 700; color: var(--accent); }
+
+  .totals {
+    margin-top: 8px;
+    background: var(--sheet);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 6px 12px 8px;
+  }
+  .trow { display: flex; justify-content: space-between; gap: 8px; font-size: 15px; line-height: 22px; }
+  .trow.sub { color: var(--ink-2); padding-left: 12px; font-size: 13px; line-height: 18px; }
+  .trow.grand {
+    border-top: 1.5px solid var(--ink);
+    margin-top: 4px;
+    padding-top: 4px;
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 700;
+  }
+  .note { margin: 6px 0 0; font-size: 12px; line-height: 16px; color: var(--ink-2); }
+  .memo {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    line-height: 18px;
+  }
+  .memo .k { display: block; }
+
+  .fld { padding: 6px 0 5px; border-bottom: 1px solid var(--line); }
+  .fk { font-size: 12px; line-height: 16px; color: var(--ink-2); }
+  .fk em { font-style: normal; color: var(--seal); font-weight: 700; margin-left: 6px; }
+  .fv { font-size: 16px; line-height: 21px; margin-top: 1px; }
+  .mute { color: var(--ink-3); font-weight: 400; }
+  .help { margin: 8px 0 0; font-size: 13px; line-height: 18px; color: var(--ink-2); }
+
+  .search {
+    margin-top: 10px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--fill);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    color: var(--ink-3);
+    font-size: 16px;
+  }
+
+  .banner {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: var(--seal-soft);
+    border-left: 3px solid var(--seal);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-top: 8px;
+  }
+  .banner.calm { background: var(--accent-soft); border-left-color: var(--accent); }
+  .banner p { margin: 0; font-size: 14px; line-height: 20px; }
+  .banner strong { display: block; font-size: 16px; line-height: 21px; margin-bottom: 2px; }
+
+  .card {
+    margin-top: 10px;
+    background: var(--sheet);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 14px;
+  }
+  .card h2 { margin: 0; font-size: 16px; line-height: 21px; font-weight: 700; }
+  .stat { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .stat:last-child { border-bottom: 0; }
+  .stat span:first-child { color: var(--ink-2); }
+
+  .fitline {
+    display: flex; align-items: center; gap: 8px;
+    margin: 4px 0 8px;
+    font-size: 13px; font-weight: 700;
+  }
+  .a4 {
+    width: 350px;
+    min-height: 500px;
+    margin: 0 auto;
+    background: #FFFEFB;
+    color: #1C1915;
+    box-shadow: 0 10px 28px rgba(28, 25, 21, 0.14);
+    padding: 16px 14px 14px;
+    font-weight: 400;
+  }
+  .a4, .a4 * { font-weight: 400; }
+  .a4title { text-align: center; font-size: 18px; letter-spacing: 0.2em; line-height: 24px; }
+  .a4rule { height: 1px; background: #1C1915; margin: 6px 0 6px; }
+  .a4c { text-align: center; font-size: 10px; line-height: 14px; color: #514C44; }
+  .parties { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 8px; margin-top: 8px; }
+  .client { font-size: 13px; line-height: 17px; }
+  .hon { font-size: 12px; line-height: 16px; }
+  .issuer { text-align: right; font-size: 9.5px; line-height: 13px; }
+  .issuer .nm { font-size: 11px; line-height: 15px; }
+  .subj { margin-top: 6px; font-size: 10px; line-height: 14px; }
+  .g { display: grid; grid-template-columns: 1.45fr 0.38fr 0.38fr 0.72fr 0.78fr; }
+  .g span { font-size: 9.5px; line-height: 13px; padding: 2px 1px; border-bottom: 1px solid #E4DDD2; }
+  .g.head span { color: #514C44; border-bottom: 1px solid #1C1915; }
+  .g .nmcol { grid-column: 1; }
+  .r { text-align: right; }
+  .sum { margin-top: 4px; }
+  .sum div { display: flex; justify-content: space-between; font-size: 10px; line-height: 14px; }
+  .sum .ind { padding-left: 10px; color: #514C44; }
+  .sum .gt { border-top: 1px solid #1C1915; margin-top: 2px; padding-top: 2px; font-size: 13px; line-height: 18px; }
+  .a4foot { margin-top: 5px; font-size: 9px; line-height: 12px; color: #514C44; }
+  .a4foot b { font-weight: 400; color: #1C1915; }
+
+  .scroll.grow { display: flex; flex-direction: column; }
+  .ghost {
+    margin-top: 4px;
+    border: 1.5px dashed var(--seal);
+    border-radius: 4px;
+    min-height: 420px;
+    padding: 28px 20px;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .scroll.grow .ghost { flex: 1; min-height: 0; margin-bottom: 8px; }
+  .ghost h2 { margin: 12px 0 0; font-size: 22px; line-height: 28px; }
+  .ghost p { margin: 12px 0 0; font-size: 16px; line-height: 24px; }
+  .ghost .fact { color: var(--ink-2); font-size: 13px; line-height: 18px; }
+
+  .check {
+    display: flex; gap: 10px; align-items: flex-start;
+    margin-top: 18px;
+    font-size: 16px; line-height: 22px;
+  }
+  .box {
+    width: 24px; height: 24px; flex: none;
+    border: 1.5px solid var(--ink);
+    border-radius: 5px;
+    margin-top: 1px;
+  }
+
+  .scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(28, 25, 21, 0.46);
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    z-index: 3;
+  }
+  .modal {
+    width: 100%;
+    background: #F7F4EE;
+    color: #1C1915;
+    border-radius: 14px;
+    padding: 18px 16px 12px;
+    box-shadow: 0 10px 28px rgba(28, 25, 21, 0.18);
+  }
+  .modal h2 { margin: 0 0 10px; font-size: 22px; line-height: 28px; font-weight: 700; }
+  .modal p { margin: 0 0 10px; font-size: 16px; line-height: 22px; }
+  .dim { opacity: 0.55; }
+
+  .gen { padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .gen .top { display: flex; justify-content: space-between; font-size: 15px; line-height: 20px; }
+  .hash { font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="sig" viewBox="0 0 17 12">
+    <rect x="0" y="7" width="3" height="5" rx="0.4" fill="currentColor"/>
+    <rect x="4.6" y="4.5" width="3" height="7.5" rx="0.4" fill="currentColor"/>
+    <rect x="9.2" y="2.2" width="3" height="9.8" rx="0.4" fill="currentColor"/>
+    <rect x="13.8" y="0" width="3" height="12" rx="0.4" fill="currentColor"/>
+  </symbol>
+  <symbol id="wifi" viewBox="0 0 16 12">
+    <path d="M1.6 4.7a8.6 8.6 0 0 1 12.8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M4.1 7.2a5.2 5.2 0 0 1 7.8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <circle cx="8" cy="10" r="1.1" fill="currentColor"/>
+  </symbol>
+  <symbol id="bat" viewBox="0 0 25 12">
+    <rect x="0.6" y="0.6" width="20.2" height="10.8" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/>
+    <rect x="2.2" y="2.2" width="15.2" height="7.6" rx="1" fill="currentColor"/>
+    <path d="M22.2 4h1.2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1.2" fill="currentColor"/>
+  </symbol>
+  <symbol id="check" viewBox="0 0 24 24">
+    <path d="M5 12.5 9.2 16.8 19 7.2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="alert" viewBox="0 0 24 24">
+    <path d="M12 4.2 20.2 19H3.8L12 4.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M12 10v4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="12" cy="16.8" r="0.9" fill="currentColor"/>
+  </symbol>
+  <symbol id="clock" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M12 8v4.5L15 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="chev" viewBox="0 0 24 24">
+    <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="home" viewBox="0 0 24 24">
+    <path d="M4 11.2 12 5l8 6.2V20a1 1 0 0 1-1 1h-5.2v-5.6H10.2V21H5a1 1 0 0 1-1-1v-8.8z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="doc" viewBox="0 0 24 24">
+    <path d="M7 3.6h6.8L18.5 8v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.6a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M13.6 3.8V8h4.4M8.5 12.2h7M8.5 16h7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="people" viewBox="0 0 24 24">
+    <circle cx="9" cy="9" r="2.3" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="16" cy="10" r="1.8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M4.5 18.6c.7-2.6 2.6-3.8 4.5-3.8s3.8 1.2 4.5 3.8M14.2 14.6c1.5-.2 3 .5 3.7 2.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="gear" viewBox="0 0 24 24">
+    <path d="M4 8h16M4 16h16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    <circle cx="9" cy="8" r="2.1" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="15" cy="16" r="2.1" fill="none" stroke="currentColor" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="search" viewBox="0 0 24 24">
+    <circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M15.8 15.8 20 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<div class="wrap">
+  <div class="intro">
+    <h1>請求・見積アプリ UIモック</h1>
+    <p>例示データです。実在の人物・取引先ではありません。枠の中の「例示」はレビュー用で、製品の画面には出しません。</p>
+    <p>各枠は 390×844。挙動の正本は DESIGN.md、画面の正本は UI_DESIGN.md です。</p>
+  </div>
+  <div class="gallery">
+
+    <figure>
+      <figcaption>01 ホーム · バックアップ済</figcaption>
+      <div class="phone" id="home" data-shot="01-home">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="scroll">
+          <div class="htitle"><h1 class="screen-name">青葉デザイン工房</h1><span class="ex">例示</span></div>
+          <div class="bchip">
+            <span class="badge moss"><svg width="16" height="16"><use href="#check"/></svg></span>
+            <span><span class="bt">バックアップ済</span><span class="bs">今日 6:12 · この iPhone 内</span></span>
+            <svg class="chev" width="18" height="18"><use href="#chev"/></svg>
+          </div>
+          <div class="actions">
+            <div class="btn primary">請求書を作る</div>
+            <div class="btn secondary side">見積</div>
+          </div>
+          <div class="btn secondary block" style="margin-top:8px">前回と同じ</div>
+          <p class="sub">直近の発行済み請求を、新しい下書きにします。</p>
+          <div class="sec">続きから</div>
+          <div class="row">
+            <div class="mark">下</div>
+            <div class="main">
+              <div class="between"><span class="t">北風出版 10月分</span><span class="yen t">¥182,944</span></div>
+              <div class="m">下書き · 番号なし</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mark">下</div>
+            <div class="main">
+              <div class="between"><span class="t">川辺スタジオ ポートレート</span><span class="yen t">¥52,800</span></div>
+              <div class="m">下書き · 番号なし</div>
+            </div>
+          </div>
+          <div class="sec">最近の取引先</div>
+          <div class="chips">
+            <span class="chip">北風出版</span>
+            <span class="chip">南商事</span>
+            <span class="chip">佐藤真理</span>
+            <span class="chip">みどり食堂</span>
+            <span class="chip">川辺スタジオ</span>
+          </div>
+          <div class="sec">最近の書類</div>
+          <div class="row">
+            <div class="mark">請</div>
+            <div class="main">
+              <div class="between"><span class="t yen">INV-2026-0014</span><span class="yen t">¥264,000</span></div>
+              <div class="m">株式会社南商事 · 10月1日</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mark">見</div>
+            <div class="main">
+              <div class="between"><span class="t yen">QUO-2026-0009</span><span class="yen t">¥88,000</span></div>
+              <div class="m">佐藤 真理 · 9月28日</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mark void">無</div>
+            <div class="main">
+              <div class="between"><span class="t yen">INV-2026-0012<span class="voidword">無効</span></span><span class="yen t">¥46,200</span></div>
+              <div class="m">合同会社みどり食堂 · 9月20日</div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab on"><svg width="22" height="22"><use href="#home"/></svg>ホーム</div>
+          <div class="tab"><svg width="22" height="22"><use href="#doc"/></svg>書類</div>
+          <div class="tab"><svg width="22" height="22"><use href="#people"/></svg>取引先</div>
+          <div class="tab"><svg width="22" height="22"><use href="#gear"/></svg>設定</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>02 空のホーム · 保存先が未設定</figcaption>
+      <div class="phone" id="home-empty" data-shot="02-home-empty">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="scroll">
+          <div class="htitle"><h1 class="screen-name">青葉デザイン工房</h1><span class="ex">例示</span></div>
+          <div class="bchip bad">
+            <span class="badge seal"><svg width="16" height="16"><use href="#alert"/></svg></span>
+            <span><span class="bt">保存先が未設定</span><span class="bs">この端末を消すと、アプリ内のコピーも消える</span></span>
+            <svg class="chev" width="18" height="18"><use href="#chev"/></svg>
+          </div>
+          <div class="actions">
+            <div class="btn primary">請求書を作る</div>
+            <div class="btn secondary side">見積</div>
+          </div>
+          <p class="help" style="font-size:16px;line-height:24px;color:var(--ink)">データはこの端末の中にあります。バックアップファイルを自分のフォルダに残します。</p>
+        </div>
+        <div class="tabbar">
+          <div class="tab on"><svg width="22" height="22"><use href="#home"/></svg>ホーム</div>
+          <div class="tab"><svg width="22" height="22"><use href="#doc"/></svg>書類</div>
+          <div class="tab"><svg width="22" height="22"><use href="#people"/></svg>取引先</div>
+          <div class="tab"><svg width="22" height="22"><use href="#gear"/></svg>設定</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>03 書類</figcaption>
+      <div class="phone" id="documents" data-shot="03-documents">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="scroll">
+          <div class="htitle"><h1>書類</h1><span class="ex">例示</span></div>
+          <div class="tabsel">
+            <span class="on">すべて</span><span>下書き</span><span>請求</span><span>見積</span><span>無効</span>
+          </div>
+          <div class="row">
+            <div class="mark">下</div>
+            <div class="main">
+              <div class="between"><span class="t">番号なし</span><span class="yen t">¥182,944</span></div>
+              <div class="m">株式会社北風出版 · 北風出版 10月分</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mark">下</div>
+            <div class="main">
+              <div class="between"><span class="t">番号なし</span><span class="yen t">¥52,800</span></div>
+              <div class="m">川辺スタジオ · ポートレート</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mark">請</div>
+            <div class="main">
+              <div class="between"><span class="t yen">INV-2026-0014</span><span class="yen t">¥264,000</span></div>
+              <div class="m">株式会社南商事 · 2026年10月1日</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mark">見</div>
+            <div class="main">
+              <div class="between"><span class="t yen">QUO-2026-0009</span><span class="yen t">¥88,000</span></div>
+              <div class="m">佐藤 真理 · 2026年9月28日</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mark void">無</div>
+            <div class="main">
+              <div class="between"><span class="t yen">INV-2026-0012<span class="voidword">無効</span></span><span class="yen t">¥46,200</span></div>
+              <div class="m">合同会社みどり食堂 · 2026年9月20日</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mark">請</div>
+            <div class="main">
+              <div class="between"><span class="t yen">INV-2026-0010</span><span class="yen t">¥118,800</span></div>
+              <div class="m">川辺スタジオ · 2026年9月2日</div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab"><svg width="22" height="22"><use href="#home"/></svg>ホーム</div>
+          <div class="tab on"><svg width="22" height="22"><use href="#doc"/></svg>書類</div>
+          <div class="tab"><svg width="22" height="22"><use href="#people"/></svg>取引先</div>
+          <div class="tab"><svg width="22" height="22"><use href="#gear"/></svg>設定</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>04 請求の編集 · 明細と税率別の合計</figcaption>
+      <div class="phone" id="editor" data-shot="04-editor">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="nav">
+          <span class="back">閉じる</span>
+          <span class="nav-title">下書き</span>
+          <span class="seg"><span>見積</span><span class="on">請求</span></span>
+        </div>
+        <div class="scroll">
+          <div class="kv"><span class="k">宛先</span><span class="v">株式会社北風出版 御中</span><span class="link">変更</span></div>
+          <div class="kv"><span class="k">件名</span><span class="v">北風出版 10月分</span></div>
+          <div class="dates">
+            <div><div class="k">発行日</div><div class="vplain">2026年10月12日</div></div>
+            <div><div class="k">支払期限</div><div class="vplain">2026年11月30日</div></div>
+          </div>
+          <div class="chips" style="margin:4px 0 2px">
+            <span class="chip on">翌月末</span>
+            <span class="chip">今月末</span>
+            <span class="chip">14日後</span>
+            <span class="chip">なし</span>
+          </div>
+          <div class="sec" style="display:flex;justify-content:space-between;align-items:baseline"><span>明細</span><span class="link">用紙を見る</span></div>
+          <div class="line">
+            <div class="top"><span class="name">ブランドガイドライン改訂</span><span class="yen name">¥120,000</span></div>
+            <div class="bot"><span>1.5 時間 · 税抜 ¥80,000</span><span class="tax">10%</span></div>
+          </div>
+          <div class="line">
+            <div class="top"><span class="name">撮影立ち会い</span><span class="yen name">¥36,000</span></div>
+            <div class="bot"><span>3 時間 · 税抜 ¥12,000</span><span class="tax">10%</span></div>
+          </div>
+          <div class="line">
+            <div class="top"><span class="name">※取材の会食</span><span class="yen name">¥8,800</span></div>
+            <div class="bot"><span>4 食 · 税抜 ¥2,200</span><span class="tax">8%</span></div>
+          </div>
+          <div class="line">
+            <div class="top"><span class="name">交通費</span><span class="yen name">¥1,840</span></div>
+            <div class="bot"><span>1 式 · 税抜 ¥1,840</span><span class="tax">対象外</span></div>
+          </div>
+          <div class="addline">空行を足す</div>
+          <div class="totals">
+            <div class="trow"><span>税抜合計</span><span class="yen">¥166,640</span></div>
+            <div class="trow"><span>10% 対象</span><span class="yen">¥156,000</span></div>
+            <div class="trow sub"><span>消費税</span><span class="yen">¥15,600</span></div>
+            <div class="trow"><span>8% 対象 ※</span><span class="yen">¥8,800</span></div>
+            <div class="trow sub"><span>消費税</span><span class="yen">¥704</span></div>
+            <div class="trow"><span>対象外</span><span class="yen">¥1,840</span></div>
+            <div class="trow grand"><span>合計</span><span class="yen">¥182,944</span></div>
+          </div>
+          <p class="note">税率ごとの税抜合計に対して、円未満を切り捨てています。</p>
+          <p class="note">※は軽減税率（8%）の対象です。</p>
+        </div>
+        <div class="footer ruled">
+          <div class="btn primary">発行して送る</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>05 用紙 · 1枚に収まる</figcaption>
+      <div class="phone" id="pdf" data-shot="05-pdf-preview">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="nav">
+          <span class="back">戻る</span>
+          <span class="nav-title">用紙</span>
+          <span class="ex">例示</span>
+        </div>
+        <div class="scroll">
+          <div class="fitline"><span class="badge moss sm"><svg width="13" height="13"><use href="#check"/></svg></span>1枚に収まります。ゆったり。</div>
+          <div class="a4">
+            <div class="a4title">請求書</div>
+            <div class="a4rule"></div>
+            <div class="a4c">番号は発行すると付きます</div>
+            <div class="a4c">発行日 2026年10月12日</div>
+            <div class="a4c">支払期限 2026年11月30日</div>
+            <div class="parties">
+              <div>
+                <div class="client">株式会社北風出版</div>
+                <div class="hon">御中</div>
+              </div>
+              <div class="issuer">
+                <div class="nm">青葉デザイン工房</div>
+                <div>〒150-0001</div>
+                <div>東京都渋谷区神宮前1-2-3</div>
+                <div>090-0000-1234</div>
+                <div>登録番号 T1234567890123</div>
+              </div>
+            </div>
+            <div class="subj">件名　北風出版 10月分</div>
+            <div class="g head" style="margin-top:4px">
+              <span>品名</span><span class="r">数量</span><span class="r">単位</span><span class="r">単価</span><span class="r">金額</span>
+            </div>
+            <div class="g">
+              <span>ブランドガイドライン改訂</span><span class="r">1.5</span><span class="r">時間</span><span class="r">80,000</span><span class="r">120,000</span>
+            </div>
+            <div class="g">
+              <span>撮影立ち会い</span><span class="r">3</span><span class="r">時間</span><span class="r">12,000</span><span class="r">36,000</span>
+            </div>
+            <div class="g">
+              <span>※取材の会食</span><span class="r">4</span><span class="r">食</span><span class="r">2,200</span><span class="r">8,800</span>
+            </div>
+            <div class="g">
+              <span>交通費</span><span class="r">1</span><span class="r">式</span><span class="r">1,840</span><span class="r">1,840</span>
+            </div>
+            <div class="sum">
+              <div><span>10% 対象</span><span>156,000</span></div>
+              <div class="ind"><span>消費税</span><span>15,600</span></div>
+              <div><span>8% 対象 ※</span><span>8,800</span></div>
+              <div class="ind"><span>消費税</span><span>704</span></div>
+              <div><span>対象外</span><span>1,840</span></div>
+              <div class="gt"><span>合計</span><span>182,944</span></div>
+            </div>
+            <div class="a4foot">※は軽減税率（8%）の対象です。</div>
+            <div class="a4foot"><b>振込先</b>　みずほ銀行 渋谷支店 普通 1234567 アオバ トオル</div>
+            <div class="a4foot"><b>備考</b>　10月8日の取材立ち会いを含みます。</div>
+          </div>
+        </div>
+        <div class="footer">
+          <div class="btn primary">発行して送る</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>06 用紙 · 1枚に入らない</figcaption>
+      <div class="phone" id="pdf-blocked" data-shot="06-pdf-blocked">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="nav">
+          <span class="back">戻る</span>
+          <span class="nav-title">用紙</span>
+          <span class="ex">例示</span>
+        </div>
+        <div class="scroll grow">
+          <div class="ghost">
+            <span class="badge seal"><svg width="16" height="16"><use href="#alert"/></svg></span>
+            <h2>1枚に入りません</h2>
+            <p>A4 の1枚に入りません。明細を減らすか、品名と備考を短くしてください。</p>
+            <p class="fact">36行。備考あり。<br>用紙は作っていません。2枚には分けません。</p>
+          </div>
+        </div>
+        <div class="footer">
+          <div class="btn primary disabled">発行して送る</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>07 取引先</figcaption>
+      <div class="phone" id="clients" data-shot="07-clients">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="scroll">
+          <div class="htitle"><h1>取引先</h1><span class="link" style="font-size:16px">追加</span></div>
+          <p class="sub">例示。発行済みの宛名は、ここを変えても動きません。</p>
+          <div class="search"><svg width="18" height="18"><use href="#search"/></svg>取引先を検索</div>
+          <div class="row">
+            <div class="main">
+              <div class="t">株式会社北風出版 <span style="font-weight:400;color:var(--ink-2)">御中</span></div>
+              <div class="m">前回 10月12日 · 東京都渋谷区神宮前</div>
+            </div>
+            <svg width="18" height="18" style="color:var(--ink-2)"><use href="#chev"/></svg>
+          </div>
+          <div class="row">
+            <div class="main">
+              <div class="t">株式会社南商事 <span style="font-weight:400;color:var(--ink-2)">御中</span></div>
+              <div class="m">前回 10月1日 · 東京都港区南青山</div>
+            </div>
+            <svg width="18" height="18" style="color:var(--ink-2)"><use href="#chev"/></svg>
+          </div>
+          <div class="row">
+            <div class="main">
+              <div class="t">佐藤 真理 <span style="font-weight:400;color:var(--ink-2)">様</span></div>
+              <div class="m">前回 9月28日 · 神奈川県鎌倉市</div>
+            </div>
+            <svg width="18" height="18" style="color:var(--ink-2)"><use href="#chev"/></svg>
+          </div>
+          <div class="row">
+            <div class="main">
+              <div class="t">合同会社みどり食堂 <span style="font-weight:400;color:var(--ink-2)">御中</span></div>
+              <div class="m">前回 9月20日 · 東京都世田谷区</div>
+            </div>
+            <svg width="18" height="18" style="color:var(--ink-2)"><use href="#chev"/></svg>
+          </div>
+          <div class="row">
+            <div class="main">
+              <div class="t">川辺スタジオ <span style="font-weight:400;color:var(--ink-2)">御中</span></div>
+              <div class="m">前回 9月2日 · 京都府京都市中京区</div>
+            </div>
+            <svg width="18" height="18" style="color:var(--ink-2)"><use href="#chev"/></svg>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab"><svg width="22" height="22"><use href="#home"/></svg>ホーム</div>
+          <div class="tab"><svg width="22" height="22"><use href="#doc"/></svg>書類</div>
+          <div class="tab on"><svg width="22" height="22"><use href="#people"/></svg>取引先</div>
+          <div class="tab"><svg width="22" height="22"><use href="#gear"/></svg>設定</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>08 品目</figcaption>
+      <div class="phone" id="items" data-shot="08-items">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="nav">
+          <span class="back">設定</span>
+          <span class="nav-title">品目</span>
+          <span class="link">追加</span>
+        </div>
+        <div class="scroll">
+          <p class="sub">例示。明細の候補です。保存される単価は税抜だけです。</p>
+          <div class="row">
+            <div class="main">
+              <div class="between"><span class="t">ブランドガイドライン改訂</span><span class="yen t">¥80,000</span></div>
+              <div class="m">式 · 税抜 · 10%</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="main">
+              <div class="between"><span class="t">撮影立ち会い</span><span class="yen t">¥12,000</span></div>
+              <div class="m">時間 · 税抜 · 10%</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="main">
+              <div class="between"><span class="t">取材の会食</span><span class="yen t">¥2,200</span></div>
+              <div class="m">食 · 税抜 · 8%</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="main">
+              <div class="between"><span class="t">交通費</span><span class="yen t">¥1,840</span></div>
+              <div class="m">式 · 税抜 · 対象外</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="main">
+              <div class="between"><span class="t">値引き</span><span class="yen t">¥-500</span></div>
+              <div class="m">式 · 税抜 · 10% · 単価だけが負</div>
+            </div>
+          </div>
+          <p class="help">非課税と不課税は区分しません。画面の語は「対象外」です。税込から入れる補助は、標準と軽減だけで、保存前に税抜へ落とします。</p>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>09 設定 · 発行者</figcaption>
+      <div class="phone" id="settings" data-shot="09-settings">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="scroll">
+          <div class="htitle"><h1>設定</h1><span class="ex">例示</span></div>
+          <div class="sec">発行者</div>
+          <div class="fld"><div class="fk">屋号または氏名</div><div class="fv">青葉デザイン工房</div></div>
+          <div class="fld"><div class="fk">郵便番号</div><div class="fv">150-0001</div></div>
+          <div class="fld"><div class="fk">住所</div><div class="fv">東京都渋谷区神宮前1-2-3 アトリエ4</div></div>
+          <div class="fld"><div class="fk">電話</div><div class="fv">090-0000-1234</div></div>
+          <div class="fld"><div class="fk">メール</div><div class="fv">aoba@example.jp</div></div>
+          <div class="fld"><div class="fk">登録番号</div><div class="fv yen">T1234567890123</div></div>
+          <div class="fld"><div class="fk">振込先</div><div class="fv">みずほ銀行 渋谷支店 普通 1234567<br>アオバ トオル</div></div>
+          <div class="row">
+            <div class="main">
+              <div class="t">支払期限の初期値</div>
+              <div class="m">翌月末 · 端数は切り捨てです。設定はありません。</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="main">
+              <div class="t">品目</div>
+              <div class="m">税抜で保存 · 5件</div>
+            </div>
+            <svg width="18" height="18" style="color:var(--ink-2)"><use href="#chev"/></svg>
+          </div>
+          <div class="row">
+            <div class="main">
+              <div class="t">バックアップ</div>
+              <div class="m">バックアップ済 · 今日 6:12</div>
+            </div>
+            <svg width="18" height="18" style="color:var(--ink-2)"><use href="#chev"/></svg>
+          </div>
+          <div class="sec">データについて</div>
+          <p class="help" style="margin-top:0">バックアップは平文です。共有フォルダに置かないでください。修正インボイスと返還請求書は、この版では作りません。税務の判断は、使う人の責任です。</p>
+        </div>
+        <div class="tabbar">
+          <div class="tab"><svg width="22" height="22"><use href="#home"/></svg>ホーム</div>
+          <div class="tab"><svg width="22" height="22"><use href="#doc"/></svg>書類</div>
+          <div class="tab"><svg width="22" height="22"><use href="#people"/></svg>取引先</div>
+          <div class="tab on"><svg width="22" height="22"><use href="#gear"/></svg>設定</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>10 バックアップ</figcaption>
+      <div class="phone" id="backup" data-shot="10-backup">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="nav">
+          <span class="back">設定</span>
+          <span class="nav-title">バックアップ</span>
+          <span class="ex">例示</span>
+        </div>
+        <div class="scroll">
+          <div class="card" style="margin-top:4px">
+            <div class="k">最終の成功</div>
+            <h2 style="margin-top:4px">2026年10月12日 6:12</h2>
+            <p class="sub">日次 · 検証済み</p>
+          </div>
+          <div class="btn primary" style="margin-top:12px">今すぐバックアップ</div>
+          <div class="sec">保存先</div>
+          <div class="t">この iPhone 内 / 請求の退避</div>
+          <p class="sub">アプリを消しても残ります。iCloud を選んだときは「同期の途中のファイルでは復元できません」と出します。</p>
+          <div class="sec">世代</div>
+          <div class="gen">
+            <div class="top"><span>10月12日 6:12 · 日次</span><span class="yen">書類 48</span></div>
+            <div class="m hash">a1b2c3d4</div>
+          </div>
+          <div class="gen">
+            <div class="top"><span>10月11日 7:01 · 日次</span><span class="yen">書類 47</span></div>
+            <div class="m hash">e5f6a7b8</div>
+          </div>
+          <div class="gen">
+            <div class="top"><span>10月10日 18:22 · 手動</span><span class="yen">書類 47</span></div>
+            <div class="m hash">0c1d2e3f</div>
+          </div>
+          <div class="gen">
+            <div class="top"><span>10月9日 7:04 · 日次</span><span class="yen">書類 46</span></div>
+            <div class="m hash">91ab22c0</div>
+          </div>
+          <p class="note">検証済みの日次は、新しいほうが残るときだけ古いものを消します。最大30個です。</p>
+          <div class="btn quiet">復元</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>11 復元</figcaption>
+      <div class="phone" id="restore" data-shot="11-restore">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="nav">
+          <span class="back">バックアップ</span>
+          <span class="nav-title">復元</span>
+          <span class="ex">例示</span>
+        </div>
+        <div class="scroll">
+          <p class="help" style="margin-top:4px">検証できたいちばん新しいファイルを選んでいます。</p>
+          <div class="card">
+            <div class="k">選択中</div>
+            <h2 style="margin-top:4px">invoice-20261011-070102-daily.invbak</h2>
+            <p class="sub">2026年10月11日 7:01 · 日次</p>
+            <div class="stat"><span>取引先</span><span class="yen">12</span></div>
+            <div class="stat"><span>書類</span><span class="yen">47</span></div>
+            <div class="stat"><span>発行済み</span><span class="yen">31</span></div>
+            <div class="stat"><span>ハッシュ</span><span class="yen hash">e5f6a7b8</span></div>
+          </div>
+          <p class="note">読めたテーブルだけを取り込むことはしません。</p>
+        </div>
+        <div class="footer stack">
+          <div class="btn primary">退避してから置き換える</div>
+          <div class="btn secondary">別のファイルを選ぶ</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>12 復元 · ファイルが壊れている</figcaption>
+      <div class="phone" id="restore-error" data-shot="12-restore-error">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="nav">
+          <span class="back">バックアップ</span>
+          <span class="nav-title">復元</span>
+          <span class="ex">例示</span>
+        </div>
+        <div class="scroll">
+          <div class="banner">
+            <span class="badge seal"><svg width="16" height="16"><use href="#alert"/></svg></span>
+            <p>このファイルは途中で切れているか、書き換わっています。別の日付を選んでください。</p>
+          </div>
+          <p class="sub">invoice-20261012-061200-daily.invbak</p>
+          <div class="card">
+            <div class="k">代わりに選んでいます</div>
+            <h2 style="margin-top:4px">invoice-20261011-070102-daily.invbak</h2>
+            <p class="sub">2026年10月11日 7:01 · 日次</p>
+            <div class="stat"><span>取引先</span><span class="yen">12</span></div>
+            <div class="stat"><span>書類</span><span class="yen">47</span></div>
+            <div class="stat"><span>発行済み</span><span class="yen">31</span></div>
+            <div class="stat"><span>ハッシュ</span><span class="yen hash">e5f6a7b8</span></div>
+          </div>
+          <p class="note">壊れたファイルでは、いまの台帳を上書きしません。</p>
+        </div>
+        <div class="footer">
+          <div class="btn primary">退避してから置き換える</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>13 発行済み · 編集できない</figcaption>
+      <div class="phone" id="issued" data-shot="13-issued">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="nav">
+          <span class="back">戻る</span>
+          <span class="nav-title yen">INV-2026-0014</span>
+          <span class="ex">例示</span>
+        </div>
+        <div class="scroll">
+          <div class="banner calm" style="margin-top:0">
+            <p><strong>発行済み</strong>この内容は変更できません。</p>
+          </div>
+          <div class="kv"><span class="k">宛先</span><span class="v" style="font-size:15px">株式会社南商事 御中</span></div>
+          <p class="note">宛名は発行したときのものです。</p>
+          <div class="dates">
+            <div><div class="k">発行日</div><div class="vplain">2026年10月1日</div></div>
+            <div><div class="k">支払期限</div><div class="vplain">2026年10月31日</div></div>
+          </div>
+          <div class="kv"><span class="k">件名</span><span class="v" style="font-size:15px">南商事 サイトリニューアル</span></div>
+          <div class="line">
+            <div class="top"><span class="name">情報設計</span><span class="yen name">¥180,000</span></div>
+            <div class="bot"><span>1 式 · 税抜 ¥180,000</span><span class="tax">10%</span></div>
+          </div>
+          <div class="line">
+            <div class="top"><span class="name">画面デザイン</span><span class="yen name">¥60,000</span></div>
+            <div class="bot"><span>1 式 · 税抜 ¥60,000</span><span class="tax">10%</span></div>
+          </div>
+          <div class="totals">
+            <div class="trow"><span>税抜合計</span><span class="yen">¥240,000</span></div>
+            <div class="trow"><span>10% 対象</span><span class="yen">¥240,000</span></div>
+            <div class="trow sub"><span>消費税</span><span class="yen">¥24,000</span></div>
+            <div class="trow grand"><span>合計</span><span class="yen">¥264,000</span></div>
+          </div>
+          <p class="note">税率ごとの税抜合計に対して、円未満を切り捨てています。</p>
+          <p class="note">登録番号 T1234567890123</p>
+        </div>
+        <div class="footer ruled stack">
+          <div class="btn primary">PDFを送る</div>
+          <div class="btn secondary">複製して下書き</div>
+          <div class="btn seal">無効にする</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>14 初回 · 発行者</figcaption>
+      <div class="phone" id="setup" data-shot="14-setup">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="scroll">
+          <div class="htitle"><h1>発行者</h1><span class="ex">例示</span></div>
+          <p class="sub">空で進めてよいのは、屋号または氏名以外です。</p>
+          <div class="fld"><div class="fk">屋号または氏名<em>必須</em></div><div class="fv">青葉デザイン工房</div></div>
+          <div class="fld"><div class="fk">郵便番号</div><div class="fv mute">未入力</div></div>
+          <div class="fld"><div class="fk">住所</div><div class="fv mute">未入力</div></div>
+          <div class="fld"><div class="fk">電話</div><div class="fv mute">未入力</div></div>
+          <div class="fld"><div class="fk">メール</div><div class="fv mute">未入力</div></div>
+          <div class="fld"><div class="fk">振込先</div><div class="fv mute">未入力</div></div>
+          <div class="fld"><div class="fk">登録番号</div><div class="fv mute">未入力</div></div>
+          <p class="help">空のままで進めます。入れるときは T と数字13桁です。空の請求は、適格請求書としては出しません。</p>
+          <p class="help">金額は税抜、端数は切り捨てです。ここでは選びません。</p>
+        </div>
+        <div class="footer">
+          <div class="btn primary">次へ</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>15 初回 · バックアップ先</figcaption>
+      <div class="phone" id="setup-backup" data-shot="15-setup-backup">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="scroll">
+          <div class="htitle"><h1>バックアップ先</h1><span class="ex">例示</span></div>
+          <p class="help" style="font-size:16px;line-height:24px;color:var(--ink)">アプリを消すと、この端末の中のコピーは消えます。残すフォルダを選んでください。</p>
+          <p class="help">推奨は「この iPhone 内」のフォルダです。iCloud を選んだときは「同期の途中のファイルでは復元できません」と出します。</p>
+          <div class="btn primary" style="margin-top:16px">保存先を選ぶ</div>
+          <div class="check">
+            <div class="box"></div>
+            <div>この端末を消すとバックアップも消えます</div>
+          </div>
+          <p class="help">チェックを入れると「あとで」を押せます。</p>
+        </div>
+        <div class="footer">
+          <div class="btn primary disabled">あとで</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>16 修復 · 台帳が開かない</figcaption>
+      <div class="phone" id="repair" data-shot="16-repair">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="scroll">
+          <div style="padding-top:28px">
+            <span class="badge seal"><svg width="16" height="16"><use href="#alert"/></svg></span>
+            <h1 style="margin-top:16px">台帳を開けません。</h1>
+            <p class="help" style="font-size:16px;line-height:24px;color:var(--ink)">壊れたまま開き直すことはしません。空の台帳も作りません。</p>
+            <p class="help">検証できたバックアップを選んでください。</p>
+            <p class="ex" style="margin-top:24px">例示 · タブはありません</p>
+          </div>
+        </div>
+        <div class="footer">
+          <div class="btn primary">バックアップから復元</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>17 発行の確認 · 登録番号あり</figcaption>
+      <div class="phone" id="confirm" data-shot="17-confirm">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="nav dim">
+          <span class="back">閉じる</span>
+          <span class="nav-title">下書き</span>
+          <span class="seg"><span>見積</span><span class="on">請求</span></span>
+        </div>
+        <div class="scroll dim">
+          <div class="kv"><span class="k">宛先</span><span class="v">株式会社北風出版 御中</span></div>
+          <div class="line">
+            <div class="top"><span class="name">ブランドガイドライン改訂</span><span class="yen name">¥120,000</span></div>
+            <div class="bot"><span>1.5 時間 · 10%</span><span class="yen">¥120,000</span></div>
+          </div>
+          <div class="line">
+            <div class="top"><span class="name">※取材の会食</span><span class="yen name">¥8,800</span></div>
+            <div class="bot"><span>4 食 · 8%</span></div>
+          </div>
+          <div class="totals">
+            <div class="trow grand"><span>合計</span><span class="yen">¥182,944</span></div>
+          </div>
+        </div>
+        <div class="scrim">
+          <div class="modal">
+            <h2>発行しますか</h2>
+            <p>発行すると、この内容は変更できません。誤りは新しい番号で出し直します。</p>
+            <p>登録番号 T1234567890123 を記載します。</p>
+            <p>交付済みの誤りは、元を残して新しい番号で出し直します。正式な修正インボイスと返還請求書はこの版では作りません。</p>
+            <div class="btn primary">発行する</div>
+            <div class="btn quiet">戻る</div>
+          </div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>18 発行の確認 · 登録番号なし</figcaption>
+      <div class="phone" id="confirm-noreg" data-shot="18-confirm-noreg">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="nav dim">
+          <span class="back">閉じる</span>
+          <span class="nav-title">下書き</span>
+          <span class="seg"><span>見積</span><span class="on">請求</span></span>
+        </div>
+        <div class="scroll dim">
+          <div class="kv"><span class="k">宛先</span><span class="v">佐藤 真理 様</span></div>
+          <div class="kv"><span class="k">件名</span><span class="v">図版 10月分</span></div>
+          <div class="totals"><div class="trow grand"><span>合計</span><span class="yen">¥88,000</span></div></div>
+        </div>
+        <div class="scrim">
+          <div class="modal">
+            <h2>発行しますか</h2>
+            <p>発行すると、この内容は変更できません。誤りは新しい番号で出し直します。</p>
+            <p>登録番号が無いので、適格請求書としては出しません。</p>
+            <p>交付済みの誤りは、元を残して新しい番号で出し直します。正式な修正インボイスと返還請求書はこの版では作りません。</p>
+            <div class="btn primary">発行する</div>
+            <div class="btn quiet">戻る</div>
+          </div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>19 ホーム · ダーク</figcaption>
+      <div class="phone dark" id="home-dark" data-shot="19-home-dark">
+        <div class="status"><span>9:41</span><span class="sys"><svg width="17" height="12"><use href="#sig"/></svg><svg width="16" height="12"><use href="#wifi"/></svg><svg width="25" height="12"><use href="#bat"/></svg></span></div>
+        <div class="scroll">
+          <div class="htitle"><h1 class="screen-name">青葉デザイン工房</h1><span class="ex">例示 · ダーク</span></div>
+          <div class="bchip">
+            <span class="badge moss"><svg width="16" height="16"><use href="#check"/></svg></span>
+            <span><span class="bt">バックアップ済</span><span class="bs">今日 6:12 · この iPhone 内</span></span>
+            <svg class="chev" width="18" height="18"><use href="#chev"/></svg>
+          </div>
+          <div class="actions">
+            <div class="btn primary">請求書を作る</div>
+            <div class="btn secondary side">見積</div>
+          </div>
+          <div class="btn secondary block" style="margin-top:8px">前回と同じ</div>
+          <p class="sub">直近の発行済み請求を、新しい下書きにします。</p>
+          <div class="sec">続きから</div>
+          <div class="row">
+            <div class="mark">下</div>
+            <div class="main">
+              <div class="between"><span class="t">北風出版 10月分</span><span class="yen t">¥182,944</span></div>
+              <div class="m">下書き · 番号なし</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mark">下</div>
+            <div class="main">
+              <div class="between"><span class="t">川辺スタジオ ポートレート</span><span class="yen t">¥52,800</span></div>
+              <div class="m">下書き · 番号なし</div>
+            </div>
+          </div>
+          <div class="sec">最近の取引先</div>
+          <div class="chips">
+            <span class="chip">北風出版</span>
+            <span class="chip">南商事</span>
+            <span class="chip">佐藤真理</span>
+            <span class="chip">みどり食堂</span>
+            <span class="chip">川辺スタジオ</span>
+          </div>
+          <div class="sec">最近の書類</div>
+          <div class="row">
+            <div class="mark">請</div>
+            <div class="main">
+              <div class="between"><span class="t yen">INV-2026-0014</span><span class="yen t">¥264,000</span></div>
+              <div class="m">株式会社南商事 · 10月1日</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mark">見</div>
+            <div class="main">
+              <div class="between"><span class="t yen">QUO-2026-0009</span><span class="yen t">¥88,000</span></div>
+              <div class="m">佐藤 真理 · 9月28日</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mark void">無</div>
+            <div class="main">
+              <div class="between"><span class="t yen">INV-2026-0012<span class="voidword">無効</span></span><span class="yen t">¥46,200</span></div>
+              <div class="m">合同会社みどり食堂 · 9月20日</div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab on"><svg width="22" height="22"><use href="#home"/></svg>ホーム</div>
+          <div class="tab"><svg width="22" height="22"><use href="#doc"/></svg>書類</div>
+          <div class="tab"><svg width="22" height="22"><use href="#people"/></svg>取引先</div>
+          <div class="tab"><svg width="22" height="22"><use href="#gear"/></svg>設定</div>
+        </div>
+        <div class="hind"></div>
+      </div>
+    </figure>
+
+  </div>
+</div>
+</body>
+</html>
