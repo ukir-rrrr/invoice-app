@@ -226,7 +226,7 @@ interface LineInput {
   itemId: string | null;
   description: string;
   quantityMilli: QuantityMilli;
-  unit: string;          // 「式」「時間」「式」「ヶ月」
+  unit: string;          // 「式」「時間」「人日」「ヶ月」
   unitPriceEx: MoneyYen;
   taxRate: TaxRate;
 }
@@ -476,7 +476,7 @@ number = `INV-${year}-${pad(seq,3)}`
 5. withholding
    off → 0
    on  → floor(subtotal_ex * 1021 / 10000)    // 10.21%
-   100_0000超は同じ計算のまま、注意バナーだけ出す
+   1,000,000超は同じ計算のまま、注意バナーだけ出す
 
 6. payable = total_in - withholding
 ```
@@ -501,7 +501,7 @@ number = `INV-${year}-${pad(seq,3)}`
 - 設定に保存。正規表現 `^T[0-9]{13}$`
 - 入力UIは `T` を固定表示し、13桁だけ打たせる。ハイフンは受けたら剥がす
 - チェックディジット検証はv1ではしない（誤った検証で弾く方が害）
-- 空でもPDFは出る。空のときは帳票に登録番号行を出さない。 homecreen に「適格請求書にする」の弱いヒントだけ出す
+- 空でもPDFは出る。空のときは帳票に登録番号行を出さない。ホーム画面に「適格請求書にする」の弱いヒントだけ出す
 
 ### 6.2 A4 1枚保証
 
