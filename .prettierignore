@@ -1,0 +1,13 @@
+node_modules
+.expo
+dist
+lib/db/migrations/registry.ts
+DESIGN.md
+UI_DESIGN.md
+UI_SYNTHESIS.md
+SYNTHESIS.md
+mockup.html
+test-results
+playwright-report
+AGENTS.md
+LICENSE
