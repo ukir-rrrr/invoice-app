@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>生成り台帳 · UIモック</title>
+<style>
+  :root {
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: #241f1b;
+    color: #E7E0D4;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans CJK JP", "Yu Gothic", "WenQuanYi Micro Hei", sans-serif;
+  }
+  .page { padding: 36px 32px 80px; }
+  .pagehead { max-width: 820px; margin-bottom: 28px; }
+  .pagehead p { margin: 0 0 8px; line-height: 1.6; font-size: 14px; }
+  .pagehead h1 { margin: 0 0 8px; font-size: 28px; font-weight: 700; letter-spacing: 0.04em; }
+  .pagehead .sub { color: #C4BBAF; }
+  .gallery { display: flex; flex-wrap: wrap; gap: 36px 28px; align-items: flex-start; }
+  figure { margin: 0; }
+  figcaption { font-size: 13px; line-height: 1.45; margin: 0 0 8px; max-width: 390px; color: #E7E0D4; }
+  button, input { font-family: inherit; }
+  button { cursor: default; }
+
+  .phone {
+    --bg: #EFEAE1;
+    --elev: #FBF8F3;
+    --sunken: #E4DDD0;
+    --ink: #1C1915;
+    --ink2: #5E574E;
+    --ink3: #6A635A;
+    --line: #DDD4C6;
+    --line2: #C9C0B0;
+    --indigo: #1A3F5C;
+    --fill: #1A3F5C;
+    --press: #122C41;
+    --soft: #E3EEF4;
+    --on: #F7F4EE;
+    --ver: #A33B2B;
+    --ver-soft: #F6E6E2;
+    --green: #1E5C3A;
+    --green-fg: #F7F4EE;
+    --green-soft: #E3F0E8;
+    --amber: #8A5A10;
+    --amber-soft: #F8EED9;
+    --red: #8E2F2A;
+    --red-soft: #F6E4E2;
+    --dis-bg: #DDD4C6;
+    --dis-fg: #6A635A;
+    --scrim: rgba(28, 25, 21, 0.48);
+    width: 390px;
+    height: 844px;
+    overflow: hidden;
+    position: relative;
+    background: var(--bg);
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans CJK JP", "Yu Gothic", "WenQuanYi Micro Hei", sans-serif;
+    font-weight: 400;
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+  }
+  .phone.dark {
+    --bg: #141311;
+    --elev: #211F1C;
+    --sunken: #0E0D0C;
+    --ink: #F3EDE4;
+    --ink2: #C4BBAF;
+    --ink3: #B7AFA3;
+    --line: #3A342C;
+    --line2: #524A40;
+    --indigo: #9FC4D6;
+    --fill: #1E4A66;
+    --press: #16384E;
+    --soft: #1A2C36;
+    --on: #F4F0E8;
+    --ver: #E7A094;
+    --ver-soft: #3A2420;
+    --green: #163528;
+    --green-fg: #8FCBAA;
+    --green-soft: #163528;
+    --amber: #E4C07A;
+    --amber-soft: #3A2C12;
+    --red: #F0A8A2;
+    --red-soft: #3A2220;
+    --dis-bg: #2A2622;
+    --dis-fg: #B7AFA3;
+    --scrim: rgba(0, 0, 0, 0.62);
+  }
+  .phone::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--ink);
+    opacity: 0.28;
+    z-index: 8;
+    pointer-events: none;
+  }
+
+  .statusbar {
+    height: 47px;
+    flex: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 22px 7px;
+    position: relative;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .island {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    width: 118px;
+    height: 32px;
+    margin-left: -59px;
+    background: #000;
+    border-radius: 18px;
+  }
+  .sys { display: block; }
+  .flag {
+    height: 18px;
+    flex: none;
+    background: var(--fill);
+    color: var(--on);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav {
+    height: 44px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 12px 0 6px;
+  }
+  .nav h1 {
+    margin: 0;
+    font-size: 17px;
+    line-height: 22px;
+    font-weight: 700;
+    flex: 1;
+    min-width: 0;
+  }
+  .iconbtn {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    color: var(--indigo);
+    display: grid;
+    place-items: center;
+    padding: 0;
+    flex: none;
+  }
+  .content {
+    flex: 1;
+    min-height: 0;
+    padding: 2px 16px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .content.tight { gap: 6px; }
+  .footer {
+    flex: none;
+    background: var(--elev);
+    border-top: 1px solid var(--line);
+    padding: 8px 16px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .tabbar {
+    height: 78px;
+    flex: none;
+    background: var(--elev);
+    border-top: 1px solid var(--line);
+    display: flex;
+    padding: 6px 4px 22px;
+  }
+  .tab {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    color: var(--ink2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 11px;
+    line-height: 14px;
+    font-family: inherit;
+    padding: 0;
+  }
+  .tab.on { color: var(--indigo); font-weight: 700; }
+  .tab svg { display: block; }
+
+  .btn {
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+    border: 0;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+  }
+  .btn.primary { background: var(--fill); color: var(--on); }
+  .btn.secondary { background: transparent; color: var(--indigo); box-shadow: inset 0 0 0 1.5px var(--indigo); }
+  .btn.quiet { height: 36px; background: transparent; color: var(--indigo); font-weight: 400; font-size: 15px; }
+  .btn.danger { background: var(--ver-soft); color: var(--ver); }
+  .btn.disabled { background: var(--dis-bg); color: var(--dis-fg); font-weight: 700; }
+  .actions { display: flex; gap: 8px; }
+  .actions .primary { flex: 1; width: auto; }
+  .actions .secondary { width: 76px; flex: none; }
+
+  .backup {
+    width: 100%;
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    font: inherit;
+    color: inherit;
+  }
+  .backup b { display: block; font-size: 15px; font-weight: 700; }
+  .backup small { display: block; margin-top: 2px; color: var(--ink2); font-size: 12px; line-height: 16px; }
+  .backup .chev { margin-left: auto; color: var(--ink3); flex: none; }
+  .backup.ok { background: var(--green-soft); }
+  .backup.bad { background: var(--red-soft); }
+  .backup.wait { background: var(--amber-soft); }
+
+  .seal {
+    width: 28px;
+    height: 28px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .seal.sq { border-radius: 6px; }
+  .seal.ok { background: var(--green); color: var(--green-fg); }
+  .seal.issued { background: var(--fill); color: var(--on); }
+  .seal.draft { box-shadow: inset 0 0 0 1.5px var(--ink); color: var(--ink); background: transparent; }
+  .seal.void { box-shadow: inset 0 0 0 1.5px var(--ver); color: var(--ver); background: transparent; }
+  .seal.circle {
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px var(--amber);
+    color: var(--amber);
+    background: transparent;
+  }
+  .seal.tri { position: relative; color: var(--red); }
+  .seal.tri svg { display: block; }
+  .seal.tri em {
+    position: absolute;
+    left: 0; right: 0; top: 8px;
+    text-align: center;
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .kicker {
+    margin: 2px 0 0;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--ink2);
+  }
+  .linkcard, .cell {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .linkcard {
+    background: var(--elev);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    min-height: 56px;
+  }
+  .linkcard b, .cell b { display: block; font-size: 15px; font-weight: 700; }
+  .cell b { font-weight: 400; font-size: 16px; }
+  .linkcard small, .cell small { display: block; margin-top: 2px; color: var(--ink2); font-size: 12px; line-height: 16px; }
+  .linkcard .chev, .cell .chev { margin-left: auto; color: var(--ink3); flex: none; }
+  .group { margin-top: 2px; }
+  .money { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+  .doc {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    column-gap: 10px;
+    align-items: center;
+    min-height: 60px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .doc .mid b { display: block; font-size: 15px; font-weight: 400; }
+  .doc .mid small, .doc .end small { display: block; color: var(--ink2); font-size: 12px; line-height: 16px; margin-top: 2px; }
+  .doc .end { text-align: right; }
+  .doc .end b { display: block; font-size: 15px; font-weight: 700; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill {
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 8px;
+    background: var(--elev);
+    box-shadow: inset 0 0 0 1px var(--line2);
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    color: var(--ink);
+  }
+  .pill.on { box-shadow: inset 0 0 0 1.5px var(--indigo); color: var(--indigo); background: transparent; }
+
+  .seg {
+    display: flex;
+    background: var(--sunken);
+    border-radius: 8px;
+    padding: 2px;
+    height: 32px;
+    flex: none;
+  }
+  .seg span {
+    flex: 1;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    color: var(--ink2);
+    border-radius: 6px;
+  }
+  .seg span.on {
+    background: var(--elev);
+    color: var(--ink);
+    font-weight: 700;
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .seg.mini { width: 148px; flex: none; }
+  .seg.mini span { font-size: 13px; }
+
+  .field { display: flex; flex-direction: column; gap: 2px; }
+  .lbl { font-size: 12px; line-height: 16px; color: var(--ink2); }
+  .input, .area {
+    background: var(--elev);
+    box-shadow: inset 0 0 0 1px var(--line2);
+    border-radius: 8px;
+    min-height: 40px;
+    padding: 8px 10px;
+    font-size: 15px;
+    line-height: 22px;
+    display: flex;
+    align-items: center;
+  }
+  .input.focus { box-shadow: inset 0 0 0 2px var(--indigo); }
+  .area { min-height: 64px; align-items: flex-start; }
+  .help { margin: 0; font-size: 12px; line-height: 16px; color: var(--ink2); }
+  .err { margin: 0; font-size: 13px; line-height: 18px; color: var(--ver); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  .line { padding: 5px 0 6px; border-bottom: 1px solid var(--line); }
+  .line .top, .line .bot { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .line .top { font-size: 14px; line-height: 18px; }
+  .line .tax { color: var(--ink2); font-size: 12px; flex: none; }
+  .line .bot { margin-top: 1px; font-size: 12px; line-height: 16px; color: var(--ink2); }
+  .line .bot .money { color: var(--ink); font-weight: 700; font-size: 14px; }
+
+  .totals {
+    background: var(--elev);
+    border-radius: 8px;
+    border-left: 3px solid var(--indigo);
+    padding: 8px 10px 8px 12px;
+  }
+  .trow { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; line-height: 18px; }
+  .trow.sub span:first-child { padding-left: 8px; }
+  .trow.grand {
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid var(--line);
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 700;
+  }
+  .tnote { margin: 4px 0 0; font-size: 11px; line-height: 15px; color: var(--ink2); }
+
+  .banner {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 18px;
+  }
+  .banner p { margin: 0; }
+  .banner.bad { background: var(--ver-soft); color: var(--ink); }
+  .banner.info { background: var(--soft); color: var(--ink); border-left: 3px solid var(--indigo); }
+  .banner .mark {
+    width: 8px;
+    flex: none;
+  }
+
+  .lede { margin: 0; font-size: 15px; line-height: 22px; }
+  .note { margin: 0; font-size: 13px; line-height: 18px; color: var(--ink2); }
+  .check {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 15px;
+    line-height: 22px;
+  }
+  .box {
+    width: 22px;
+    height: 22px;
+    flex: none;
+    margin-top: 1px;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1.5px var(--line2);
+    background: var(--elev);
+  }
+
+  .search {
+    height: 40px;
+    border-radius: 8px;
+    background: var(--elev);
+    box-shadow: inset 0 0 0 1px var(--line2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    color: var(--ink3);
+    font-size: 15px;
+  }
+  .search.on { color: var(--ink); box-shadow: inset 0 0 0 2px var(--indigo); }
+
+  .desk {
+    flex: 1;
+    min-height: 0;
+    background: var(--sunken);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 10px 16px 0;
+  }
+  .a4 {
+    width: 340px;
+    height: 481px;
+    background: #FBF8F3;
+    color: #1C1915;
+    box-shadow: 0 10px 28px rgba(28, 25, 21, 0.12);
+    padding: 14px 12px 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  .a4 h2 {
+    margin: 0;
+    text-align: center;
+    font-size: 16px;
+    letter-spacing: 0.42em;
+    font-weight: 700;
+    text-indent: 0.42em;
+  }
+  .a4 .meta { margin-top: 6px; text-align: right; font-size: 8px; line-height: 1.45; }
+  .a4 .who { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; font-size: 8px; line-height: 1.4; }
+  .a4 .who .to { font-size: 12px; font-weight: 700; }
+  .a4 .who .from { text-align: right; max-width: 58%; }
+  .a4 table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 7.5px; }
+  .a4 th { font-weight: 400; color: #1C1915; }
+  .a4 th, .a4 td { border-bottom: 0.6px solid #1C1915; padding: 3px 2px; text-align: right; vertical-align: top; }
+  .a4 th:first-child, .a4 td.name { text-align: left; }
+  .a4 td.name { width: 42%; }
+  .a4 .sum { margin-top: 6px; margin-left: auto; width: 62%; font-size: 8px; }
+  .a4 .sum div { display: flex; justify-content: space-between; line-height: 1.45; }
+  .a4 .sum .grand { font-weight: 700; font-size: 11px; border-top: 0.6px solid #1C1915; margin-top: 2px; padding-top: 2px; }
+  .a4 .fine { margin: 4px 0 0; font-size: 7px; line-height: 1.35; }
+  .a4 .bank { margin-top: auto; padding-top: 6px; font-size: 8px; line-height: 1.4; border-top: 0.6px solid #1C1915; }
+  .paper-cap { padding: 6px 16px 0; font-size: 12px; line-height: 16px; color: var(--ink2); }
+
+  .meter {
+    background: var(--elev);
+    border-radius: 8px;
+    padding: 12px;
+  }
+  .meter p { margin: 8px 0 0; font-size: 14px; line-height: 20px; }
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    background: var(--scrim);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .sheet {
+    background: var(--elev);
+    color: var(--ink);
+    border-radius: 16px 16px 0 0;
+    padding: 8px 16px 28px;
+  }
+  .grab {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--line2);
+    margin: 2px auto 10px;
+  }
+  .sheet h2 { margin: 0 0 8px; font-size: 20px; line-height: 26px; font-weight: 700; }
+  .sheet .body { margin: 0 0 8px; font-size: 15px; line-height: 22px; }
+  .keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+  .keys b {
+    height: 48px;
+    border-radius: 10px;
+    background: var(--sunken);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .kv { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .kv span { color: var(--ink2); }
+  .kv b { font-weight: 700; text-align: right; max-width: 64%; }
+  .hash { font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+  .pick {
+    border-radius: 12px;
+    background: var(--soft);
+    box-shadow: inset 0 0 0 1.5px var(--indigo);
+    padding: 10px 12px;
+  }
+  .pick.dead {
+    background: var(--ver-soft);
+    box-shadow: inset 0 0 0 1.5px var(--ver);
+  }
+  .pick b { display: block; font-size: 14px; font-weight: 700; }
+  .pick small { display: block; margin-top: 2px; color: var(--ink2); font-size: 12px; line-height: 16px; }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    line-height: 16px;
+    padding: 0 6px;
+    border-radius: 4px;
+    color: var(--ver);
+    box-shadow: inset 0 0 0 1px var(--ver);
+    margin-top: 4px;
+  }
+  .para { margin: 0; font-size: 14px; line-height: 21px; }
+  .para + .para { margin-top: 10px; }
+  .footquiet { margin: 0; font-size: 12px; line-height: 16px; color: var(--ink2); text-align: center; }
+  .split { display: flex; justify-content: space-between; align-items: center; }
+  .req { color: var(--ver); font-size: 12px; margin-left: 4px; }
+  .phone[data-file="05-editor"] .content.tight { gap: 4px; padding-top: 0; }
+  .phone[data-file="05-editor"] .lbl { line-height: 14px; }
+  .phone[data-file="05-editor"] .input { min-height: 32px; padding: 4px 10px; font-size: 14px; }
+  .phone[data-file="05-editor"] .line { padding: 2px 0 3px; }
+  .phone[data-file="05-editor"] .line .top { font-size: 13px; line-height: 16px; }
+  .phone[data-file="05-editor"] .pill { height: 26px; font-size: 12px; }
+  .phone[data-file="05-editor"] .totals { padding: 6px 8px 6px 10px; }
+  .phone[data-file="05-editor"] .trow { font-size: 12px; line-height: 16px; }
+  .phone[data-file="05-editor"] .trow.grand { font-size: 18px; line-height: 22px; margin-top: 2px; padding-top: 2px; }
+  .phone[data-file="05-editor"] .tnote { margin-top: 2px; line-height: 14px; }
+  .phone[data-file="05-editor"] .footer { padding-top: 6px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="pagehead">
+    <p class="sub">オフライン請求・見積 · UIモック · 390×844</p>
+    <h1>生成り台帳</h1>
+    <p>紙の地は生成り、数字は墨、主操作は藍。各枠の上の帯はモックの注釈で、製品の画面には置かない。氏名、金額、登録番号はすべて例示。</p>
+  </header>
+  <div class="gallery">
+
+    <figure>
+      <figcaption>01 ホーム。24時間以内のバックアップ済</figcaption>
+      <div class="phone" data-file="01-home">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13" aria-hidden="true"><rect x="0" y="8" width="3" height="5" rx="0.5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" rx="0.5" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" rx="0.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" rx="0.5" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav"><h1>10月12日（月）</h1></div>
+        <div class="content">
+          <button class="backup ok">
+            <span class="seal sq ok">済</span>
+            <span><b>バックアップ済</b><small>今日 7:12 · この iPhone 内</small></span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+          </button>
+          <div class="actions">
+            <button class="btn primary">請求書を作る</button>
+            <button class="btn secondary">見積</button>
+          </div>
+          <button class="linkcard">
+            <span><b>前回と同じ</b><small>株式会社北窓（例）の9月分 · 264,000円</small></span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+          </button>
+          <p class="kicker">取引先</p>
+          <div class="chips">
+            <span class="pill">株式会社北窓（例）</span>
+            <span class="pill">佐藤 美咲（例）</span>
+            <span class="pill">カフェ三日月（例）</span>
+            <span class="pill">合同会社浜風（例）</span>
+          </div>
+          <p class="kicker">続きから</p>
+          <div class="doc">
+            <span class="seal sq draft">下</span>
+            <span class="mid"><b>番号なし</b><small>株式会社北窓（例）</small></span>
+            <span class="end"><b class="money">300,080円</b><small>下書き · 請求</small></span>
+          </div>
+          <p class="kicker">直近</p>
+          <div class="doc">
+            <span class="seal sq issued">済</span>
+            <span class="mid"><b class="money">INV-2026-0013</b><small>株式会社北窓（例）</small></span>
+            <span class="end"><b class="money">264,000円</b><small>9月30日 · 請求</small></span>
+          </div>
+          <div class="doc">
+            <span class="seal sq issued">済</span>
+            <span class="mid"><b class="money">QUO-2026-0008</b><small>カフェ三日月（例）</small></span>
+            <span class="end"><b class="money">154,000円</b><small>10月8日 · 見積</small></span>
+          </div>
+        </div>
+        <div class="tabbar">
+          <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 11.2 12 4l8 7.2V20H4Z" fill="currentColor"/></svg>ホーム</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 3.5h7l5 5V20.5H7Z" fill="none" stroke="currentColor" stroke-width="1.75"/><path d="M14 3.5V9h5" fill="none" stroke="currentColor" stroke-width="1.75"/></svg>書類</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.75"/><path d="M5.5 19.5c1.2-3 3.4-4.5 6.5-4.5s5.3 1.5 6.5 4.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>取引先</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M9.6 2.7h4.8l.5 2.3a7 7 0 0 1 1.9.8l2.1-1.2 3.4 3.4-1.2 2.1a7 7 0 0 1 .8 1.9l2.3.5v4.8l-2.3.5a7 7 0 0 1-.8 1.9l1.2 2.1-3.4 3.4-2.1-1.2a7 7 0 0 1-1.9.8l-.5 2.3H9.6l-.5-2.3a7 7 0 0 1-1.9-.8l-2.1 1.2-3.4-3.4 1.2-2.1a7 7 0 0 1-.8-1.9l-2.3-.5V9.6l2.3-.5a7 7 0 0 1 .8-1.9L3.7 5.1 7.1 1.7l2.1 1.2a7 7 0 0 1 1.9-.8l.5-2.3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>設定</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>02 空のホーム。図は置かない。保存先は未設定</figcaption>
+      <div class="phone" data-file="02-home-empty">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav"><h1>10月12日（月）</h1></div>
+        <div class="content">
+          <button class="backup bad">
+            <span class="seal tri"><svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 3.2 25.5 24.5H2.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><em>!</em></span>
+            <span><b>保存先が未設定</b><small>この端末を消すと、アプリ内のコピーも消える</small></span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+          </button>
+          <div class="actions">
+            <button class="btn primary">請求書を作る</button>
+            <button class="btn secondary">見積</button>
+          </div>
+          <p class="lede">データはこの端末の中にあります。バックアップファイルを自分のフォルダに残します。</p>
+        </div>
+        <div class="tabbar">
+          <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 11.2 12 4l8 7.2V20H4Z" fill="currentColor"/></svg>ホーム</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 3.5h7l5 5V20.5H7Z" fill="none" stroke="currentColor" stroke-width="1.75"/></svg>書類</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.75"/><path d="M5.5 19.5c1.2-3 3.4-4.5 6.5-4.5s5.3 1.5 6.5 4.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>取引先</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M9.6 2.7h4.8l.5 2.3a7 7 0 0 1 1.9.8l2.1-1.2 3.4 3.4-1.2 2.1a7 7 0 0 1 .8 1.9l2.3.5v4.8l-2.3.5a7 7 0 0 1-.8 1.9l1.2 2.1-3.4 3.4-2.1-1.2a7 7 0 0 1-1.9.8l-.5 2.3H9.6l-.5-2.3a7 7 0 0 1-1.9-.8l-2.1 1.2-3.4-3.4 1.2-2.1a7 7 0 0 1-.8-1.9l-2.3-.5V9.6l2.3-.5a7 7 0 0 1 .8-1.9L3.7 5.1 7.1 1.7l2.1 1.2a7 7 0 0 1 1.9-.8l.5-2.3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>設定</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>03 ホーム。データはあるが保存先が無い</figcaption>
+      <div class="phone" data-file="03-home-backup-warning">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav"><h1>10月12日（月）</h1></div>
+        <div class="content">
+          <button class="backup bad">
+            <span class="seal tri"><svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 3.2 25.5 24.5H2.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><em>!</em></span>
+            <span><b>保存先が未設定</b><small>この端末を消すと、アプリ内のコピーも消える</small></span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+          </button>
+          <div class="actions">
+            <button class="btn primary">請求書を作る</button>
+            <button class="btn secondary">見積</button>
+          </div>
+          <button class="linkcard">
+            <span><b>前回と同じ</b><small>株式会社北窓（例）の9月分 · 264,000円</small></span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+          </button>
+          <p class="kicker">続きから</p>
+          <div class="doc">
+            <span class="seal sq draft">下</span>
+            <span class="mid"><b>番号なし</b><small>株式会社北窓（例）</small></span>
+            <span class="end"><b class="money">300,080円</b><small>下書き · 請求</small></span>
+          </div>
+          <p class="kicker">直近</p>
+          <div class="doc">
+            <span class="seal sq issued">済</span>
+            <span class="mid"><b class="money">INV-2026-0013</b><small>株式会社北窓（例）</small></span>
+            <span class="end"><b class="money">264,000円</b><small>9月30日 · 請求</small></span>
+          </div>
+        </div>
+        <div class="tabbar">
+          <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 11.2 12 4l8 7.2V20H4Z" fill="currentColor"/></svg>ホーム</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 3.5h7l5 5V20.5H7Z" fill="none" stroke="currentColor" stroke-width="1.75"/></svg>書類</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.75"/><path d="M5.5 19.5c1.2-3 3.4-4.5 6.5-4.5s5.3 1.5 6.5 4.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>取引先</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M9.6 2.7h4.8l.5 2.3a7 7 0 0 1 1.9.8l2.1-1.2 3.4 3.4-1.2 2.1a7 7 0 0 1 .8 1.9l2.3.5v4.8l-2.3.5a7 7 0 0 1-.8 1.9l1.2 2.1-3.4 3.4-2.1-1.2a7 7 0 0 1-1.9.8l-.5 2.3H9.6l-.5-2.3a7 7 0 0 1-1.9-.8l-2.1 1.2-3.4-3.4 1.2-2.1a7 7 0 0 1-.8-1.9l-2.3-.5V9.6l2.3-.5a7 7 0 0 1 .8-1.9L3.7 5.1 7.1 1.7l2.1 1.2a7 7 0 0 1 1.9-.8l.5-2.3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>設定</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>04 書類。すべて / 下書き / 請求 / 見積 / 無効</figcaption>
+      <div class="phone" data-file="04-documents">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav"><h1>書類</h1></div>
+        <div class="content">
+          <div class="seg">
+            <span class="on">すべて</span><span>下書き</span><span>請求</span><span>見積</span><span>無効</span>
+          </div>
+          <div class="doc">
+            <span class="seal sq draft">下</span>
+            <span class="mid"><b>番号なし</b><small>株式会社北窓（例）</small></span>
+            <span class="end"><b class="money">300,080円</b><small>下書き · 請求</small></span>
+          </div>
+          <div class="doc">
+            <span class="seal sq issued">済</span>
+            <span class="mid"><b class="money">INV-2026-0013</b><small>株式会社北窓（例）</small></span>
+            <span class="end"><b class="money">264,000円</b><small>9月30日 · 請求</small></span>
+          </div>
+          <div class="doc">
+            <span class="seal sq issued">済</span>
+            <span class="mid"><b class="money">QUO-2026-0008</b><small>カフェ三日月（例）</small></span>
+            <span class="end"><b class="money">154,000円</b><small>10月8日 · 見積</small></span>
+          </div>
+          <div class="doc">
+            <span class="seal sq issued">済</span>
+            <span class="mid"><b class="money">INV-2026-0012</b><small>佐藤 美咲（例）</small></span>
+            <span class="end"><b class="money">88,000円</b><small>9月15日 · 請求</small></span>
+          </div>
+          <div class="doc">
+            <span class="seal sq void">無</span>
+            <span class="mid"><b class="money">INV-2026-0009</b><small>佐藤 美咲（例）</small></span>
+            <span class="end"><b class="money">52,800円</b><small>無効 · 請求</small></span>
+          </div>
+        </div>
+        <div class="tabbar">
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 11.2 12 4l8 7.2V20H4Z" fill="none" stroke="currentColor" stroke-width="1.75"/></svg>ホーム</button>
+          <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 3.5h7l5 5V20.5H7Z" fill="currentColor"/></svg>書類</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.75"/><path d="M5.5 19.5c1.2-3 3.4-4.5 6.5-4.5s5.3 1.5 6.5 4.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>取引先</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M9.6 2.7h4.8l.5 2.3a7 7 0 0 1 1.9.8l2.1-1.2 3.4 3.4-1.2 2.1a7 7 0 0 1 .8 1.9l2.3.5v4.8l-2.3.5a7 7 0 0 1-.8 1.9l1.2 2.1-3.4 3.4-2.1-1.2a7 7 0 0 1-1.9.8l-.5 2.3H9.6l-.5-2.3a7 7 0 0 1-1.9-.8l-2.1 1.2-3.4-3.4 1.2-2.1a7 7 0 0 1-.8-1.9l-2.3-.5V9.6l2.3-.5a7 7 0 0 1 .8-1.9L3.7 5.1 7.1 1.7l2.1 1.2a7 7 0 0 1 1.9-.8l.5-2.3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>設定</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>05 請求の下書き。明細と、税率ごとの合計</figcaption>
+      <div class="phone" data-file="05-editor">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav">
+          <button class="iconbtn" aria-label="戻る"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <h1>下書き</h1>
+          <div class="seg mini"><span>見積</span><span class="on">請求</span></div>
+        </div>
+        <div class="content tight">
+          <div class="field">
+            <span class="lbl">件名</span>
+            <div class="input">株式会社北窓 10月分（例）</div>
+          </div>
+          <div class="field">
+            <span class="lbl">宛先</span>
+            <div class="input split">株式会社北窓 御中（例）<svg width="16" height="16" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></div>
+          </div>
+          <div class="row2">
+            <div class="field"><span class="lbl">発行日</span><div class="input money">2026-10-12</div></div>
+            <div class="field"><span class="lbl">支払期限</span><div class="input money">2026-11-30</div></div>
+          </div>
+          <div class="chips">
+            <span class="pill on">翌月末</span>
+            <span class="pill">今月末</span>
+            <span class="pill">14日後</span>
+            <span class="pill">なし</span>
+          </div>
+          <div class="line">
+            <div class="top"><span>Webサイト改修（例）</span><span class="tax">10%</span></div>
+            <div class="bot"><span>1 式 × 180,000</span><span class="money">180,000円</span></div>
+          </div>
+          <div class="line">
+            <div class="top"><span>取材・原稿（例）</span><span class="tax">10%</span></div>
+            <div class="bot"><span>1.5 時間 × 8,000</span><span class="money">12,000円</span></div>
+          </div>
+          <div class="line">
+            <div class="top"><span>※ 冊子印刷（例）</span><span class="tax">8%</span></div>
+            <div class="bot"><span>200 部 × 400</span><span class="money">80,000円</span></div>
+          </div>
+          <div class="line">
+            <div class="top"><span>交通費（例）</span><span class="tax">対象外</span></div>
+            <div class="bot"><span>1 式 × 2,480</span><span class="money">2,480円</span></div>
+          </div>
+          <div class="chips">
+            <span class="pill">改修</span><span class="pill">原稿</span><span class="pill">冊子</span><span class="pill">＋空行</span>
+          </div>
+          <section class="totals">
+            <div class="trow"><span>税抜小計</span><span class="money">274,480円</span></div>
+            <div class="trow"><span>10% 対象</span><span class="money">192,000円</span></div>
+            <div class="trow sub"><span>消費税（10%）</span><span class="money">19,200円</span></div>
+            <div class="trow"><span>8% 対象</span><span class="money">80,000円</span></div>
+            <div class="trow sub"><span>消費税（8%）</span><span class="money">6,400円</span></div>
+            <div class="trow"><span>対象外</span><span class="money">2,480円</span></div>
+            <div class="trow grand"><span>合計</span><span class="money">300,080円</span></div>
+            <p class="tnote">※は軽減税率（8%）の対象です。</p>
+            <p class="tnote">税率ごとの税抜合計に対して、円未満を切り捨てています。</p>
+          </section>
+        </div>
+        <div class="footer">
+          <button class="btn primary">発行して送る</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>06 紙面。下書きなので番号はまだ無い。A4 は1枚</figcaption>
+      <div class="phone" data-file="06-pdf-preview">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav">
+          <button class="iconbtn" aria-label="戻る"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <h1>紙面</h1>
+        </div>
+        <p class="paper-cap">番号は発行すると付きます。A4 1枚に収まります。</p>
+        <div class="desk">
+          <article class="a4">
+            <h2>請求書</h2>
+            <div class="meta">
+              <div>発行日 2026年10月12日</div>
+              <div>支払期限 2026年11月30日</div>
+            </div>
+            <div class="who">
+              <div>
+                <div class="to">株式会社北窓 御中</div>
+              </div>
+              <div class="from">
+                <div>青木デザイン事務所（例）</div>
+                <div>〒150-0001</div>
+                <div>東京都渋谷区神宮前1-2-3（例）</div>
+                <div>登録番号 T0000000000001</div>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr><th>品名</th><th>数量</th><th>単位</th><th>単価</th><th>金額</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="name">Webサイト改修（例）</td><td>1</td><td>式</td><td>180,000</td><td>180,000</td></tr>
+                <tr><td class="name">取材・原稿（例）</td><td>1.5</td><td>時間</td><td>8,000</td><td>12,000</td></tr>
+                <tr><td class="name">※冊子印刷（例）</td><td>200</td><td>部</td><td>400</td><td>80,000</td></tr>
+                <tr><td class="name">交通費（例）</td><td>1</td><td>式</td><td>2,480</td><td>2,480</td></tr>
+              </tbody>
+            </table>
+            <div class="sum">
+              <div><span>10% 対象</span><span>192,000</span></div>
+              <div><span>消費税（10%）</span><span>19,200</span></div>
+              <div><span>8% 対象</span><span>80,000</span></div>
+              <div><span>消費税（8%）</span><span>6,400</span></div>
+              <div><span>対象外</span><span>2,480</span></div>
+              <div class="grand"><span>合計</span><span>300,080円</span></div>
+            </div>
+            <p class="fine">※は軽減税率（8%）の対象です。</p>
+            <div class="bank">
+              <div>振込先</div>
+              <div>例銀行 渋谷支店 普通 0000000 アオキ リン（例）</div>
+              <div>備考　納品は10月20日を予定（例）</div>
+            </div>
+          </article>
+        </div>
+        <div class="footer">
+          <button class="btn primary">発行して送る</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>07 紙面の拒否。1枚に入らないので紙は出さない</figcaption>
+      <div class="phone" data-file="07-pdf-blocked">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav">
+          <button class="iconbtn" aria-label="戻る"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <h1>紙面</h1>
+        </div>
+        <div class="content">
+          <div class="banner bad">
+            <span class="seal tri"><svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 3.2 25.5 24.5H2.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><em>!</em></span>
+            <p>A4 の1枚に入りません。明細を減らすか、品名と備考を短くしてください。</p>
+          </div>
+          <div class="meter">
+            <p class="kicker">別の下書き（例）</p>
+            <p>明細 36行（短い品名）。備考なし。いちばん詰めても1枚を超えます。2ページには分割しません。</p>
+          </div>
+        </div>
+        <div class="footer">
+          <button class="btn disabled">発行して送る</button>
+          <button class="btn quiet">編集に戻る</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>08 取引先</figcaption>
+      <div class="phone" data-file="08-clients">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav"><h1>取引先</h1></div>
+        <div class="content">
+          <div class="search"><svg width="16" height="16" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="1.75"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>検索</div>
+          <button class="cell"><span><b>株式会社北窓（例） 御中</b><small>渋谷区神宮前 · 直近 10月12日</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <button class="cell"><span><b>佐藤 美咲（例） 様</b><small>世田谷区 · 直近 9月15日</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <button class="cell"><span><b>カフェ三日月（例） 御中</b><small>目黒区 · 直近 10月8日</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <button class="cell"><span><b>合同会社浜風（例） 御中</b><small>鎌倉市 · 直近 8月2日</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <p class="note">非表示にしても、発行済みの宛名は書類側に残ります。</p>
+        </div>
+        <div class="tabbar">
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 11.2 12 4l8 7.2V20H4Z" fill="none" stroke="currentColor" stroke-width="1.75"/></svg>ホーム</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 3.5h7l5 5V20.5H7Z" fill="none" stroke="currentColor" stroke-width="1.75"/></svg>書類</button>
+          <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3" fill="currentColor"/><path d="M5.5 19.5c1.2-3 3.4-4.5 6.5-4.5s5.3 1.5 6.5 4.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>取引先</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M9.6 2.7h4.8l.5 2.3a7 7 0 0 1 1.9.8l2.1-1.2 3.4 3.4-1.2 2.1a7 7 0 0 1 .8 1.9l2.3.5v4.8l-2.3.5a7 7 0 0 1-.8 1.9l1.2 2.1-3.4 3.4-2.1-1.2a7 7 0 0 1-1.9.8l-.5 2.3H9.6l-.5-2.3a7 7 0 0 1-1.9-.8l-2.1 1.2-3.4-3.4 1.2-2.1a7 7 0 0 1-.8-1.9l-2.3-.5V9.6l2.3-.5a7 7 0 0 1 .8-1.9L3.7 5.1 7.1 1.7l2.1 1.2a7 7 0 0 1 1.9-.8l.5-2.3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>設定</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>09 品目。設定の中。タブにはしない</figcaption>
+      <div class="phone" data-file="09-items">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav">
+          <button class="iconbtn" aria-label="設定へ戻る"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <h1>品目</h1>
+        </div>
+        <div class="content">
+          <button class="cell"><span><b>Webサイト改修（例）</b><small>式 · 180,000円 · 10%</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <button class="cell"><span><b>取材・原稿（例）</b><small>時間 · 8,000円 · 10%</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <button class="cell"><span><b>※ 冊子印刷（例）</b><small>部 · 400円 · 8%</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <button class="cell"><span><b>交通費（例）</b><small>式 · 2,480円 · 対象外</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <p class="note">単価は税抜です。標準と軽減の編集だけ、「税込から入れる」で保存前に税抜へ落とします。対象外には出しません。</p>
+        </div>
+        <div class="footer">
+          <button class="btn primary">品目を追加</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>10 設定。端数と源泉の行は無い</figcaption>
+      <div class="phone" data-file="10-settings">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav"><h1>設定</h1></div>
+        <div class="content">
+          <p class="kicker">仕事</p>
+          <button class="cell"><span><b>発行者</b><small>青木デザイン事務所（例）</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <button class="cell"><span><b>品目</b><small>4件</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <button class="cell"><span><b>支払期限の初期値</b><small>翌月末</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <p class="kicker">保全</p>
+          <button class="cell"><span><b>バックアップ</b><small>バックアップ済 · 今日 7:12</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <button class="cell"><span><b>復元</b><small>検証済みのファイルから置き換える</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <p class="kicker">説明</p>
+          <button class="cell"><span><b>データについて</b><small>平文、修正、税、源泉</small></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg></button>
+          <p class="footquiet">買い切りです。アカウントはありません。</p>
+        </div>
+        <div class="tabbar">
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 11.2 12 4l8 7.2V20H4Z" fill="none" stroke="currentColor" stroke-width="1.75"/></svg>ホーム</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 3.5h7l5 5V20.5H7Z" fill="none" stroke="currentColor" stroke-width="1.75"/></svg>書類</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.75"/><path d="M5.5 19.5c1.2-3 3.4-4.5 6.5-4.5s5.3 1.5 6.5 4.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>取引先</button>
+          <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M9.6 2.7h4.8l.5 2.3a7 7 0 0 1 1.9.8l2.1-1.2 3.4 3.4-1.2 2.1a7 7 0 0 1 .8 1.9l2.3.5v4.8l-2.3.5a7 7 0 0 1-.8 1.9l1.2 2.1-3.4 3.4-2.1-1.2a7 7 0 0 1-1.9.8l-.5 2.3H9.6l-.5-2.3a7 7 0 0 1-1.9-.8l-2.1 1.2-3.4-3.4 1.2-2.1a7 7 0 0 1-.8-1.9l-2.3-.5V9.6l2.3-.5a7 7 0 0 1 .8-1.9L3.7 5.1 7.1 1.7l2.1 1.2a7 7 0 0 1 1.9-.8l.5-2.3Z" fill="currentColor"/><circle cx="12" cy="12" r="2.5" fill="var(--elev)"/></svg>設定</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>11 発行者プロフィール</figcaption>
+      <div class="phone" data-file="11-issuer">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav">
+          <button class="iconbtn" aria-label="設定へ戻る"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <h1>発行者</h1>
+        </div>
+        <div class="content tight">
+          <div class="field"><span class="lbl">屋号または氏名<span class="req">必須</span></span><div class="input">青木デザイン事務所（例）</div></div>
+          <div class="row2">
+            <div class="field"><span class="lbl">郵便番号</span><div class="input money">150-0001</div></div>
+            <div class="field"><span class="lbl">電話</span><div class="input money">090-0000-0000</div></div>
+          </div>
+          <div class="field"><span class="lbl">住所</span><div class="input">東京都渋谷区神宮前1-2-3（例）</div></div>
+          <div class="field"><span class="lbl">メール</span><div class="input">aoki@example.jp</div></div>
+          <div class="field">
+            <span class="lbl">登録番号</span>
+            <div class="input money">T0000000000001</div>
+            <p class="help">空欄なら、請求書に登録番号を出さず、適格請求書としては出しません。</p>
+          </div>
+          <div class="field">
+            <span class="lbl">振込先</span>
+            <div class="area">例銀行 渋谷支店 普通 0000000 アオキ リン（例）</div>
+          </div>
+        </div>
+        <div class="footer"><button class="btn primary">保存</button></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>12 バックアップ。世代と平文の注意</figcaption>
+      <div class="phone" data-file="12-backup">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav">
+          <button class="iconbtn" aria-label="戻る"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <h1>バックアップ</h1>
+        </div>
+        <div class="content">
+          <button class="backup ok">
+            <span class="seal sq ok">済</span>
+            <span><b>バックアップ済</b><small>最終成功 10月12日 7:12 · 日次</small></span>
+          </button>
+          <div class="kv"><span>保存先</span><b>この iPhone 内 / 請求控え（例）</b></div>
+          <p class="kicker">世代</p>
+          <div class="doc">
+            <span class="seal sq ok">済</span>
+            <span class="mid"><b>10月12日 7:12 · 日次</b><small>書類 12 · <span class="hash">a1b2c3d4</span></small></span>
+            <span class="end"><small>最新</small></span>
+          </div>
+          <div class="doc">
+            <span class="seal sq ok">済</span>
+            <span class="mid"><b>10月11日 8:02 · 日次</b><small>書類 11 · <span class="hash">9c0e1a22</span></small></span>
+            <span class="end"></span>
+          </div>
+          <div class="doc">
+            <span class="seal sq ok">済</span>
+            <span class="mid"><b>10月10日 9:41 · 日次</b><small>書類 11 · <span class="hash">44ab10c8</span></small></span>
+            <span class="end"></span>
+          </div>
+          <div class="doc">
+            <span class="seal sq ok">済</span>
+            <span class="mid"><b>10月9日 18:20 · 手動</b><small>書類 10 · <span class="hash">b7d21e90</span></small></span>
+            <span class="end"></span>
+          </div>
+          <p class="note">バックアップは平文です。共有フォルダに置かないでください。</p>
+        </div>
+        <div class="footer">
+          <button class="btn primary">今すぐバックアップ</button>
+          <button class="btn quiet">復元</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>13 復元。検証できた最新を選択済み</figcaption>
+      <div class="phone" data-file="13-restore">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav">
+          <button class="iconbtn" aria-label="戻る"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <h1>復元</h1>
+        </div>
+        <div class="content">
+          <div class="pick">
+            <b>invoice-20261012-071200-daily.invbak（例）</b>
+            <small>検証できた、いちばん新しいファイルです。</small>
+          </div>
+          <div class="kv"><span>作成</span><b>10月12日 7:12</b></div>
+          <div class="kv"><span>取引先</span><b class="money">4</b></div>
+          <div class="kv"><span>書類</span><b class="money">12</b></div>
+          <div class="kv"><span>発行済み</span><b class="money">8</b></div>
+          <div class="kv"><span>ハッシュ</span><b class="hash">a1b2c3d4</b></div>
+          <div class="kv"><span>発行者</span><b>青木デザイン事務所（例）</b></div>
+          <p class="note">いまの台帳を退避してから、このファイルで置き換えます。</p>
+        </div>
+        <div class="footer">
+          <button class="btn primary">退避してから置き換える</button>
+          <button class="btn quiet">別のファイルを選ぶ</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>14 復元の失敗。HASH_MISMATCH。本番は置き換えない</figcaption>
+      <div class="phone" data-file="14-restore-error">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav">
+          <button class="iconbtn" aria-label="戻る"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <h1>復元</h1>
+        </div>
+        <div class="content">
+          <div class="banner bad">
+            <span class="seal tri"><svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 3.2 25.5 24.5H2.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><em>!</em></span>
+            <p>このファイルは途中で切れているか、書き換わっています。別の日付を選んでください。</p>
+          </div>
+          <div class="pick dead">
+            <b>invoice-20261011-080200-daily.invbak（例）</b>
+            <span class="tag">選べません</span>
+          </div>
+          <p class="kicker">代わりに選択中</p>
+          <div class="pick">
+            <b>10月10日 9:41 · 日次（例）</b>
+            <small>書類 11 · 発行済み 7 · <span class="hash">44ab10c8</span></small>
+          </div>
+          <p class="note">いまの台帳を退避してから、このファイルで置き換えます。</p>
+        </div>
+        <div class="footer">
+          <button class="btn primary">退避してから置き換える</button>
+          <button class="btn quiet">別のファイルを選ぶ</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>15 初回。発行者。屋号があれば次へ進める</figcaption>
+      <div class="phone" data-file="15-setup">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav"><h1>発行者</h1></div>
+        <div class="content">
+          <p class="lede">屋号か氏名があれば、見積と請求を作れます。</p>
+          <div class="field"><span class="lbl">屋号または氏名<span class="req">必須</span></span><div class="input">青木デザイン事務所（例）</div></div>
+          <div class="field"><span class="lbl">住所</span><div class="input" style="color:var(--ink3)">空でも進めます</div></div>
+          <div class="field"><span class="lbl">登録番号</span><div class="input" style="color:var(--ink3)">空でも進めます</div><p class="help">空欄なら、請求書に登録番号を出さず、適格請求書としては出しません。</p></div>
+          <div class="field"><span class="lbl">振込先</span><div class="input" style="color:var(--ink3)">空でも進めます</div></div>
+          <p class="note">端数と、税込か税抜かは聞きません。税抜と、円未満の切り捨てだけです。</p>
+        </div>
+        <div class="footer"><button class="btn primary">次へ</button></div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>16 初回。保存先。チェック前は「あとで」が無効</figcaption>
+      <div class="phone" data-file="16-setup-folder">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav"><h1>バックアップの保存先</h1></div>
+        <div class="content">
+          <p class="lede">データはこの端末の中にあります。バックアップファイルを自分のフォルダに残します。</p>
+          <p class="note">この iPhone 内のフォルダを推奨します。iCloud を選ぶと、同期の途中のファイルでは復元できません。</p>
+          <label class="check"><span class="box"></span><span>この端末を消すとバックアップも消えます。</span></label>
+          <p class="note">チェックを入れると「あとで」が押せます。チェックせずに閉じることはできません。</p>
+        </div>
+        <div class="footer">
+          <button class="btn primary">保存先を選ぶ</button>
+          <button class="btn disabled">あとで</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>17 修復。タブは出さない。空の台帳は作らない</figcaption>
+      <div class="phone" data-file="17-repair">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav"><h1>台帳を開けません</h1></div>
+        <div class="content">
+          <div class="banner bad">
+            <span class="seal tri"><svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 3.2 25.5 24.5H2.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><em>!</em></span>
+            <p>中の台帳が壊れているか、整合が取れていません。空の台帳は作りません。</p>
+          </div>
+          <p class="note">直せる操作は、検証できるバックアップからの復元だけです。</p>
+        </div>
+        <div class="footer">
+          <button class="btn primary">バックアップから復元</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>18 発行済み。編集は無く、記録のまま見せる</figcaption>
+      <div class="phone" data-file="18-issued">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav">
+          <button class="iconbtn" aria-label="戻る"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <h1 class="money">INV-2026-0013</h1>
+          <span class="seal sq issued">済</span>
+        </div>
+        <div class="content tight">
+          <div class="banner info"><p>この表示は発行時の記録です。取引先や設定を変えても、ここは変わりません。</p></div>
+          <div class="kv"><span>件名</span><b>株式会社北窓 9月分（例）</b></div>
+          <div class="kv"><span>宛先</span><b>株式会社北窓 御中（例）</b></div>
+          <div class="kv"><span>発行日</span><b class="money">2026-09-30</b></div>
+          <div class="kv"><span>支払期限</span><b class="money">2026-10-31</b></div>
+          <div class="line">
+            <div class="top"><span>デザイン顧問（例）</span><span class="tax">10%</span></div>
+            <div class="bot"><span>1 式 × 240,000</span><span class="money">240,000円</span></div>
+          </div>
+          <section class="totals">
+            <div class="trow"><span>税抜小計</span><span class="money">240,000円</span></div>
+            <div class="trow"><span>10% 対象</span><span class="money">240,000円</span></div>
+            <div class="trow sub"><span>消費税（10%）</span><span class="money">24,000円</span></div>
+            <div class="trow grand"><span>合計</span><span class="money">264,000円</span></div>
+            <p class="tnote">税率ごとの税抜合計に対して、円未満を切り捨てています。</p>
+          </section>
+        </div>
+        <div class="footer">
+          <button class="btn primary">PDF を送る</button>
+          <button class="btn secondary">複製して下書き</button>
+          <button class="btn danger">無効にする</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>19 テンキー。数量は小数、行の消費税は出さない</figcaption>
+      <div class="phone" data-file="19-keypad">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav">
+          <button class="iconbtn" aria-label="戻る"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <h1>下書き</h1>
+        </div>
+        <div class="content">
+          <div class="field"><span class="lbl">件名</span><div class="input">株式会社北窓 10月分（例）</div></div>
+          <div class="line">
+            <div class="top"><span>取材・原稿（例）</span><span class="tax">10%</span></div>
+            <div class="bot"><span>1.5 時間 × 8,000</span><span class="money">12,000円</span></div>
+          </div>
+        </div>
+        <div class="overlay">
+          <div class="sheet">
+            <div class="grab"></div>
+            <h2>取材・原稿（例）</h2>
+            <div class="row2">
+              <div class="field"><span class="lbl">数量 · 時間</span><div class="input focus money">1.5</div></div>
+              <div class="field"><span class="lbl">税抜単価</span><div class="input money">8,000円</div></div>
+            </div>
+            <div class="seg" style="margin-top:8px"><span class="on">10%</span><span>8%</span><span>対象外</span></div>
+            <div class="split" style="margin-top:8px"><span class="lbl">行の金額</span><b class="money">12,000円</b></div>
+            <p class="help">行ごとの消費税は出しません。単価の入力中は小数点の代わりにマイナスが出ます。</p>
+            <div class="keys">
+              <b>1</b><b>2</b><b>3</b>
+              <b>4</b><b>5</b><b>6</b>
+              <b>7</b><b>8</b><b>9</b>
+              <b>.</b><b>0</b><b>消</b>
+            </div>
+          </div>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>20 発行確認。登録番号がある請求の例</figcaption>
+      <div class="phone" data-file="20-issue-confirm">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav"><h1>下書き</h1><div class="seg mini"><span>見積</span><span class="on">請求</span></div></div>
+        <div class="content">
+          <section class="totals">
+            <div class="trow grand"><span>合計</span><span class="money">300,080円</span></div>
+            <p class="tnote">10% の消費税 19,200円 · 8% の消費税 6,400円</p>
+          </section>
+        </div>
+        <div class="overlay">
+          <div class="sheet">
+            <div class="grab"></div>
+            <h2>発行して送る</h2>
+            <p class="body">発行すると、この内容は変更できません。誤りは新しい番号で出し直します。</p>
+            <p class="body">登録番号 T0000000000001 を記載します。</p>
+            <p class="body">交付済みの誤りは、元を残して新しい番号で出し直します。正式な修正インボイスと返還請求書はこの版では作りません。</p>
+            <p class="split"><span>合計</span><b class="money" style="font-size:22px">300,080円</b></p>
+            <div style="height:10px"></div>
+            <button class="btn primary">発行して送る</button>
+            <button class="btn quiet">発行しない</button>
+          </div>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>21 宛先シート。その場で追加し、取引先タブへは行かない</figcaption>
+      <div class="phone" data-file="21-client-sheet">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav"><h1>下書き</h1></div>
+        <div class="content">
+          <div class="field"><span class="lbl">宛先</span><div class="input">宛先を選ぶ</div></div>
+        </div>
+        <div class="overlay">
+          <div class="sheet">
+            <div class="grab"></div>
+            <h2>宛先</h2>
+            <div class="search on"><svg width="16" height="16" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="1.75"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>北の窓（例）</div>
+            <p class="kicker">直近</p>
+            <button class="cell"><span><b>株式会社北窓（例） 御中</b><small>渋谷区神宮前</small></span></button>
+            <button class="cell"><span><b>この名前で追加</b><small>「北の窓（例）」を取引先にする</small></span></button>
+            <p class="kicker">敬称</p>
+            <div class="seg" style="width:160px"><span class="on">御中</span><span>様</span></div>
+            <p class="help" style="margin-top:8px">マスタの画面には移動しません。追加した名前は取引先に残ります。</p>
+            <button class="btn quiet">閉じる</button>
+          </div>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>22 データについて</figcaption>
+      <div class="phone" data-file="22-about">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav">
+          <button class="iconbtn" aria-label="設定へ戻る"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <h1>データについて</h1>
+        </div>
+        <div class="content">
+          <p class="para">バックアップは平文です。共有フォルダに置かないでください。</p>
+          <p class="para">交付済みの誤りは、元を残して新しい番号で出し直します。正式な修正インボイスと返還請求書はこの版では作りません。</p>
+          <p class="para">税務判断は利用者の責任です。</p>
+          <p class="para">非課税と不課税はこの版では区分しません。画面の「対象外」にまとめています。</p>
+          <p class="para">源泉徴収は自動計算しません。必要なら備考に書いてください。</p>
+          <p class="para">電子帳簿保存法の検索やタイムスタンプの完全対応を、このアプリは名乗りません。</p>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>23 ホーム。ダーク。OS の外観に従う</figcaption>
+      <div class="phone dark" data-file="23-home-dark">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav"><h1>10月12日（月）</h1></div>
+        <div class="content">
+          <button class="backup ok">
+            <span class="seal sq ok">済</span>
+            <span><b>バックアップ済</b><small>今日 7:12 · この iPhone 内</small></span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+          </button>
+          <div class="actions">
+            <button class="btn primary">請求書を作る</button>
+            <button class="btn secondary">見積</button>
+          </div>
+          <button class="linkcard">
+            <span><b>前回と同じ</b><small>株式会社北窓（例）の9月分 · 264,000円</small></span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+          </button>
+          <p class="kicker">取引先</p>
+          <div class="chips">
+            <span class="pill">株式会社北窓（例）</span>
+            <span class="pill">佐藤 美咲（例）</span>
+            <span class="pill">カフェ三日月（例）</span>
+          </div>
+          <p class="kicker">直近</p>
+          <div class="doc">
+            <span class="seal sq draft">下</span>
+            <span class="mid"><b>番号なし</b><small>株式会社北窓（例）</small></span>
+            <span class="end"><b class="money">300,080円</b><small>下書き · 請求</small></span>
+          </div>
+          <div class="doc">
+            <span class="seal sq issued">済</span>
+            <span class="mid"><b class="money">INV-2026-0013</b><small>株式会社北窓（例）</small></span>
+            <span class="end"><b class="money">264,000円</b><small>9月30日 · 請求</small></span>
+          </div>
+        </div>
+        <div class="tabbar">
+          <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 11.2 12 4l8 7.2V20H4Z" fill="currentColor"/></svg>ホーム</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 3.5h7l5 5V20.5H7Z" fill="none" stroke="currentColor" stroke-width="1.75"/></svg>書類</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.75"/><path d="M5.5 19.5c1.2-3 3.4-4.5 6.5-4.5s5.3 1.5 6.5 4.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>取引先</button>
+          <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M9.6 2.7h4.8l.5 2.3a7 7 0 0 1 1.9.8l2.1-1.2 3.4 3.4-1.2 2.1a7 7 0 0 1 .8 1.9l2.3.5v4.8l-2.3.5a7 7 0 0 1-.8 1.9l1.2 2.1-3.4 3.4-2.1-1.2a7 7 0 0 1-1.9.8l-.5 2.3H9.6l-.5-2.3a7 7 0 0 1-1.9-.8l-2.1 1.2-3.4-3.4 1.2-2.1a7 7 0 0 1-.8-1.9l-2.3-.5V9.6l2.3-.5a7 7 0 0 1 .8-1.9L3.7 5.1 7.1 1.7l2.1 1.2a7 7 0 0 1 1.9-.8l.5-2.3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>設定</button>
+        </div>
+      </div>
+    </figure>
+
+    <figure>
+      <figcaption>24 編集。ダーク。紙の合計は藍の縦線のまま</figcaption>
+      <div class="phone dark" data-file="24-editor-dark">
+        <div class="statusbar"><span>9:41</span><i class="island"></i><svg class="sys" width="54" height="13" viewBox="0 0 54 13"><rect x="0" y="8" width="3" height="5" fill="currentColor"/><rect x="5" y="5" width="3" height="8" fill="currentColor"/><rect x="10" y="2.5" width="3" height="10.5" fill="currentColor"/><rect x="15" y="0" width="3" height="13" fill="currentColor"/><rect x="30" y="1" width="20" height="11" rx="2" fill="none" stroke="currentColor"/><rect x="32" y="3" width="14" height="7" rx="1" fill="currentColor"/></svg></div>
+        <div class="flag">例示データ · 実在の取引ではありません</div>
+        <div class="nav">
+          <button class="iconbtn" aria-label="戻る"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <h1>下書き</h1>
+          <div class="seg mini"><span>見積</span><span class="on">請求</span></div>
+        </div>
+        <div class="content tight">
+          <div class="field">
+            <span class="lbl">宛先</span>
+            <div class="input">株式会社北窓 御中（例）</div>
+          </div>
+          <div class="line">
+            <div class="top"><span>Webサイト改修（例）</span><span class="tax">10%</span></div>
+            <div class="bot"><span>1 式 × 180,000</span><span class="money">180,000円</span></div>
+          </div>
+          <div class="line">
+            <div class="top"><span>取材・原稿（例）</span><span class="tax">10%</span></div>
+            <div class="bot"><span>1.5 時間 × 8,000</span><span class="money">12,000円</span></div>
+          </div>
+          <div class="line">
+            <div class="top"><span>※ 冊子印刷（例）</span><span class="tax">8%</span></div>
+            <div class="bot"><span>200 部 × 400</span><span class="money">80,000円</span></div>
+          </div>
+          <div class="line">
+            <div class="top"><span>交通費（例）</span><span class="tax">対象外</span></div>
+            <div class="bot"><span>1 式 × 2,480</span><span class="money">2,480円</span></div>
+          </div>
+          <section class="totals">
+            <div class="trow"><span>税抜小計</span><span class="money">274,480円</span></div>
+            <div class="trow"><span>10% 対象</span><span class="money">192,000円</span></div>
+            <div class="trow sub"><span>消費税（10%）</span><span class="money">19,200円</span></div>
+            <div class="trow"><span>8% 対象</span><span class="money">80,000円</span></div>
+            <div class="trow sub"><span>消費税（8%）</span><span class="money">6,400円</span></div>
+            <div class="trow"><span>対象外</span><span class="money">2,480円</span></div>
+            <div class="trow grand"><span>合計</span><span class="money">300,080円</span></div>
+            <p class="tnote">※は軽減税率（8%）の対象です。</p>
+            <p class="tnote">税率ごとの税抜合計に対して、円未満を切り捨てています。</p>
+          </section>
+        </div>
+        <div class="footer">
+          <button class="btn primary">発行して送る</button>
+        </div>
+      </div>
+    </figure>
+
+  </div>
+</div>
+</body>
+</html>
